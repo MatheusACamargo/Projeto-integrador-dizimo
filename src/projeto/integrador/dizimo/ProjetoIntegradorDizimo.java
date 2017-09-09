@@ -15,7 +15,7 @@ public class ProjetoIntegradorDizimo {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println("Hello Git-World! Olha aqui!! Minha alteração");
+        System.out.println("Hello Git-World! Olha aqui!! Minha alteração!");
         System.out.println("outra linha modificada agora");
     }
     
