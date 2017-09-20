@@ -5,28 +5,19 @@
  */
 package projeto.integrador.dizimo;
 
-import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.text.MaskFormatter;
-
 /**
  *
- * @author 0132944
+ * @author Usuario
  */
-public class TelaEndereco extends javax.swing.JFrame {
-    MaskFormatter mf;
+public class TelaEndereco extends javax.swing.JDialog {
+    private Funcao fun;
 
     /**
      * Creates new form TelaEndereco
      */
-    public TelaEndereco() {
-        try {
-            mf = new MaskFormatter("##.###-###");
-        } catch (ParseException ex) {
-            Logger.getLogger(TelaEndereco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+    public TelaEndereco(java.awt.Dialog parent, boolean modal, Funcao fun) {
+        super(parent, modal);
+        this.fun = fun;
         initComponents();
     }
 
@@ -39,6 +30,10 @@ public class TelaEndereco extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel6 = new javax.swing.JLabel();
+        tfBairro = new javax.swing.JTextField();
+        btOK = new javax.swing.JButton();
+        ftCep = new javax.swing.JFormattedTextField();
         tfCodigo = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -48,13 +43,28 @@ public class TelaEndereco extends javax.swing.JFrame {
         tfDescComplem = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         tfVila = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        tfBairro = new javax.swing.JTextField();
-        btOK = new javax.swing.JButton();
-        ftCep = new javax.swing.JFormattedTextField(mf);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Endereço");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        jLabel6.setText("Bairro");
+
+        btOK.setText("OK");
+        btOK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btOKActionPerformed(evt);
+            }
+        });
+
+        try {
+            ftCep.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##.###-###")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        ftCep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ftCepActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Código");
 
@@ -72,28 +82,13 @@ public class TelaEndereco extends javax.swing.JFrame {
 
         jLabel5.setText("Vila");
 
-        jLabel6.setText("Bairro");
-
-        btOK.setText("OK");
-        btOK.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btOKActionPerformed(evt);
-            }
-        });
-
-        ftCep.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ftCepActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btOK))
                     .addGroup(layout.createSequentialGroup()
@@ -119,13 +114,12 @@ public class TelaEndereco extends javax.swing.JFrame {
                             .addComponent(tfDescComplem)
                             .addComponent(tfLogradouro)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(tfCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                                .addComponent(tfCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                                 .addGap(100, 100, 100))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(ftCep, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(14, 14, 14)))
-                .addContainerGap())
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -162,10 +156,6 @@ public class TelaEndereco extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tfDescComplemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfDescComplemActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfDescComplemActionPerformed
-
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btOKActionPerformed
@@ -173,6 +163,10 @@ public class TelaEndereco extends javax.swing.JFrame {
     private void ftCepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ftCepActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ftCepActionPerformed
+
+    private void tfDescComplemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfDescComplemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfDescComplemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -201,10 +195,17 @@ public class TelaEndereco extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TelaEndereco().setVisible(true);
+                TelaEndereco dialog = new TelaEndereco(new javax.swing.JDialog(), true, Funcao.INCLUSAO);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }

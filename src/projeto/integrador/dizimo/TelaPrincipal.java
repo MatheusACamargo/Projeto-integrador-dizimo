@@ -49,6 +49,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         });
 
         pbEnderecos.setText("Endereços");
+        pbEnderecos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pbEnderecosActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -78,12 +83,17 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pbPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbPessoasActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_pbPessoasActionPerformed
+        GridPessoas gp = new GridPessoas(this, true);
+        gp.setVisible(true);    }//GEN-LAST:event_pbPessoasActionPerformed
 
     private void pbFichasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbFichasActionPerformed
         TelaFicha tFicha = new TelaFicha();
     }//GEN-LAST:event_pbFichasActionPerformed
+
+    private void pbEnderecosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbEnderecosActionPerformed
+        GridEnderecos ge = new GridEnderecos(this, true);
+        ge.setVisible(true);
+    }//GEN-LAST:event_pbEnderecosActionPerformed
 
     /**
      * @param args the command line arguments

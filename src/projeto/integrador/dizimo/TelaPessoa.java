@@ -6,11 +6,6 @@
 package projeto.integrador.dizimo;
 
 import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.text.MaskFormatter;
 import javax.swing.text.NumberFormatter;
 
 /**
@@ -18,26 +13,15 @@ import javax.swing.text.NumberFormatter;
  * @author 0132944
  */
 public class TelaPessoa extends javax.swing.JDialog {
-
-    private MaskFormatter mf;
-//    private final SimpleDateFormat df;
-    private MaskFormatter dm;
+    private Funcao fun;
 
     /**
      * Creates new form TelaPessoa
      */
-    public TelaPessoa(java.awt.Dialog parent, boolean modal) {
+    public TelaPessoa(java.awt.Dialog parent, boolean modal, Funcao fun) {
         super(parent, modal);
-        try {
-
-            mf = new MaskFormatter("(##)#####-####");
-            dm = new MaskFormatter("##/##/####");
-        } catch (ParseException ex) {
-            Logger.getLogger(TelaPessoa.class.getName()).log(Level.SEVERE, null, ex);
-        }
-//        df = new SimpleDateFormat("dd/mm/yyyy");
+        this.fun = fun;
         initComponents();
-//        dm.install(ftNascimento);
     }
 
     /**
@@ -65,9 +49,9 @@ public class TelaPessoa extends javax.swing.JDialog {
         jLabel7 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
-        ftTelefone = new javax.swing.JFormattedTextField(mf);
+        ftTelefone = new javax.swing.JFormattedTextField();
         jLabel9 = new javax.swing.JLabel();
-        ftNascimento = new javax.swing.JFormattedTextField(dm);
+        ftNascimento = new javax.swing.JFormattedTextField();
         jLabel10 = new javax.swing.JLabel();
         coEndereco = new javax.swing.JComboBox<>();
         jLabel11 = new javax.swing.JLabel();
@@ -321,7 +305,7 @@ public class TelaPessoa extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                TelaPessoa dialog = new TelaPessoa(new javax.swing.JDialog(), true);
+                TelaPessoa dialog = new TelaPessoa(new javax.swing.JDialog(), true, Funcao.INCLUSAO);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
