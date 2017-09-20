@@ -10,5 +10,9 @@ package projeto.integrador.dizimo;
  * @author Usuario
  */
 public class Testes {
+    public static void main(String[] args) {
+        TelaEndereco te = new TelaEndereco();
+        te.setVisible(true);
+    }
     
 }
