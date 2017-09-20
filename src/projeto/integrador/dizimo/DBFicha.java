@@ -17,6 +17,37 @@ public class DBFicha {
 
     public DBFicha() {
     }
-    
+
+    public Integer getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(Integer codigo) {
+        this.codigo = codigo;
+    }
+
+    public Integer getIntResponsavel() {
+        return intResponsavel;
+    }
+
+    public void setIntResponsavel(Integer intResponsavel) {
+        this.intResponsavel = intResponsavel;
+    }
+
+    public DBPessoa getResponsavel() {
+        return responsavel;
+    }
+
+    public void setResponsavel(DBPessoa responsavel) {
+        this.responsavel = responsavel;
+    }
+
+    public String getObservacoes() {
+        return observacoes;
+    }
+
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
+    }
     
 }
