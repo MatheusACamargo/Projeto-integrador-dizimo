@@ -63,11 +63,6 @@ public class TelaEndereco extends javax.swing.JDialog {
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
-        ftCep.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ftCepActionPerformed(evt);
-            }
-        });
 
         jLabel1.setText("Código");
 
@@ -76,12 +71,6 @@ public class TelaEndereco extends javax.swing.JDialog {
         jLabel3.setText("CEP");
 
         jLabel4.setText("Desc.Complementar");
-
-        tfDescComplem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfDescComplemActionPerformed(evt);
-            }
-        });
 
         jLabel5.setText("Vila");
 
@@ -163,14 +152,6 @@ public class TelaEndereco extends javax.swing.JDialog {
         dispose();
         OK = true;
     }//GEN-LAST:event_btOKActionPerformed
-
-    private void ftCepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ftCepActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ftCepActionPerformed
-
-    private void tfDescComplemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfDescComplemActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfDescComplemActionPerformed
 
     public boolean isOK() {
         return OK;
