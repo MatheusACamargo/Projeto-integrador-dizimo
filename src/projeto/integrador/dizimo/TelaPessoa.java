@@ -14,6 +14,7 @@ import javax.swing.text.NumberFormatter;
  */
 public class TelaPessoa extends javax.swing.JDialog {
     private Funcao fun;
+    private boolean OK;
 
     /**
      * Creates new form TelaPessoa
@@ -21,6 +22,7 @@ public class TelaPessoa extends javax.swing.JDialog {
     public TelaPessoa(java.awt.Dialog parent, boolean modal, Funcao fun) {
         super(parent, modal);
         this.fun = fun;
+        OK = false;
         initComponents();
     }
 
@@ -69,6 +71,7 @@ public class TelaPessoa extends javax.swing.JDialog {
         ftNumCasa = new javax.swing.JFormattedTextField(new NumberFormatter(NumberFormat.getInstance()));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Pessoas");
 
         tfNumFichaAtual.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -97,8 +100,19 @@ public class TelaPessoa extends javax.swing.JDialog {
         jLabel7.setText("Natural");
 
         jButton2.setText("OK");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jLabel8.setText("Religião");
+
+        try {
+            ftTelefone.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("(##)#####-####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
 
         jLabel9.setText("Instrução");
 
@@ -267,6 +281,10 @@ public class TelaPessoa extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public boolean isOK() {
+        return OK;
+    }
+
     private void tfNumFichaAtualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfNumFichaAtualActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tfNumFichaAtualActionPerformed
@@ -274,6 +292,11 @@ public class TelaPessoa extends javax.swing.JDialog {
     private void ftNumCasaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ftNumCasaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ftNumCasaActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        dispose();
+        OK = true;
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments

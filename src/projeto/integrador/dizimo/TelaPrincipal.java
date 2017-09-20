@@ -94,7 +94,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private void pbEnderecosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbEnderecosActionPerformed
         GridEnderecos ge = new GridEnderecos(this, true);
         ge.setVisible(true);
-        ge.setVisible(false);
     }//GEN-LAST:event_pbEnderecosActionPerformed
 
     /**
