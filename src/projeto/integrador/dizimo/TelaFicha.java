@@ -39,6 +39,8 @@ public class TelaFicha extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbPagamentos = new javax.swing.JTable();
         lbHistorico = new javax.swing.JLabel();
+        pbPessoas = new javax.swing.JButton();
+        pbOk = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Ficha do dízimo");
@@ -86,6 +88,15 @@ public class TelaFicha extends javax.swing.JFrame {
         lbHistorico.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbHistorico.setText("Histórico das contribuições");
 
+        pbPessoas.setText("Pessoas");
+        pbPessoas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pbPessoasActionPerformed(evt);
+            }
+        });
+
+        pbOk.setText("OK");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -99,15 +110,21 @@ public class TelaFicha extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(tfEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(tfNumero, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(tfResponsavel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(tfNumero, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tfResponsavel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pbPessoas)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbHistorico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 722, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 722, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(pbOk)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -120,7 +137,8 @@ public class TelaFicha extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfResponsavel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbResponsavel))
+                    .addComponent(lbResponsavel)
+                    .addComponent(pbPessoas))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbEndereco)
@@ -128,8 +146,10 @@ public class TelaFicha extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbHistorico)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pbOk)
+                .addContainerGap())
         );
 
         pack();
@@ -143,6 +163,11 @@ public class TelaFicha extends javax.swing.JFrame {
             dtmPagamentos.addRow(rowDefault);
         }
     }//GEN-LAST:event_formWindowOpened
+
+    private void pbPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbPessoasActionPerformed
+        TelaPessoasFicha tPessoas = new TelaPessoasFicha(this, true);
+        tPessoas.setVisible(true);
+    }//GEN-LAST:event_pbPessoasActionPerformed
 
     /**
      * @param args the command line arguments
@@ -185,6 +210,8 @@ public class TelaFicha extends javax.swing.JFrame {
     private javax.swing.JLabel lbHistorico;
     private javax.swing.JLabel lbNumero;
     private javax.swing.JLabel lbResponsavel;
+    private javax.swing.JButton pbOk;
+    private javax.swing.JButton pbPessoas;
     private javax.swing.JTable tbPagamentos;
     private javax.swing.JTextField tfEndereco;
     private javax.swing.JTextField tfNumero;
