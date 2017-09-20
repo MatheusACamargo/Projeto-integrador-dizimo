@@ -11,6 +11,7 @@ package projeto.integrador.dizimo;
  */
 public class TelaEndereco extends javax.swing.JDialog {
     private Funcao fun;
+    private boolean OK;
 
     /**
      * Creates new form TelaEndereco
@@ -18,6 +19,7 @@ public class TelaEndereco extends javax.swing.JDialog {
     public TelaEndereco(java.awt.Dialog parent, boolean modal, Funcao fun) {
         super(parent, modal);
         this.fun = fun;
+        OK = false;
         initComponents();
     }
 
@@ -45,6 +47,7 @@ public class TelaEndereco extends javax.swing.JDialog {
         tfVila = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Endereço");
 
         jLabel6.setText("Bairro");
 
@@ -157,7 +160,8 @@ public class TelaEndereco extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
-        // TODO add your handling code here:
+        dispose();
+        OK = true;
     }//GEN-LAST:event_btOKActionPerformed
 
     private void ftCepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ftCepActionPerformed
@@ -167,6 +171,10 @@ public class TelaEndereco extends javax.swing.JDialog {
     private void tfDescComplemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfDescComplemActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tfDescComplemActionPerformed
+
+    public boolean isOK() {
+        return OK;
+    }
 
     /**
      * @param args the command line arguments
