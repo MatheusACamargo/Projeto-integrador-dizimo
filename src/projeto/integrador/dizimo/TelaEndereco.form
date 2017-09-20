@@ -135,9 +135,6 @@
           <Format format="##.###-###" subtype="-1" type="5"/>
         </Property>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ftCepActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="tfCodigo">
     </Component>
@@ -164,9 +161,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="tfDescComplem">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tfDescComplemActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
       <Properties>
