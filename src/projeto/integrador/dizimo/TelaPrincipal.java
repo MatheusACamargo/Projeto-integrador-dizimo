@@ -87,8 +87,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
         gp.setVisible(true);    }//GEN-LAST:event_pbPessoasActionPerformed
 
     private void pbFichasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbFichasActionPerformed
-        TelaFicha tFicha = new TelaFicha();
-        tFicha.setVisible(true);
+        GridFichas gf = new GridFichas(this, true);
+        gf.setVisible(true);
     }//GEN-LAST:event_pbFichasActionPerformed
 
     private void pbEnderecosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbEnderecosActionPerformed
