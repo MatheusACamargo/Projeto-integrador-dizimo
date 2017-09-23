@@ -118,7 +118,7 @@ public class TelaPessoa extends javax.swing.JDialog {
 
         jLabel9.setText("Instrução");
 
-        ftNascimento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+        ftNascimento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/mm/yyyy"))));
 
         jLabel10.setText("Profissão");
 

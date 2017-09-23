@@ -29,7 +29,7 @@ public class GridPessoas extends javax.swing.JDialog {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        tfFiltroNome = new javax.swing.JTextField();
+        tfFiltro = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tPessoas = new javax.swing.JTable();
         btIncluir = new javax.swing.JButton();
@@ -38,10 +38,11 @@ public class GridPessoas extends javax.swing.JDialog {
         btExcluir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Tabela de Pessoas");
 
-        jLabel1.setText("Filtro Nome");
+        jLabel1.setText("Filtro");
 
-        tfFiltroNome.setText(" ");
+        tfFiltro.setText(" ");
 
         tPessoas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -111,7 +112,7 @@ public class GridPessoas extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tfFiltroNome, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(tfFiltro, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -124,7 +125,7 @@ public class GridPessoas extends javax.swing.JDialog {
                     .addComponent(btConsultar)
                     .addComponent(btExcluir)
                     .addComponent(jLabel1)
-                    .addComponent(tfFiltroNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tfFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
                 .addContainerGap())
@@ -203,6 +204,6 @@ public class GridPessoas extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tPessoas;
-    private javax.swing.JTextField tfFiltroNome;
+    private javax.swing.JTextField tfFiltro;
     // End of variables declaration//GEN-END:variables
 }
