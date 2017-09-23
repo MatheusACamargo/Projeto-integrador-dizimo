@@ -37,6 +37,7 @@ public class TelaVinculacao extends javax.swing.JDialog {
         ftDataInicial = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Vinculação de pessoa na ficha[");
 
         lbDataInicial.setText("Data Inicial");
 
