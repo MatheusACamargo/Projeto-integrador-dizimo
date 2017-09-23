@@ -106,11 +106,10 @@ public class TelaEndereco extends javax.swing.JDialog {
                             .addComponent(tfDescComplem)
                             .addComponent(tfLogradouro)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(tfCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
-                                .addGap(100, 100, 100))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(ftCep, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(ftCep, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(tfCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 168, Short.MAX_VALUE)))))
                 .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(

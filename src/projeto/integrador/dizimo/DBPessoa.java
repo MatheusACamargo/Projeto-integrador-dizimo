@@ -21,6 +21,8 @@ public class DBPessoa {
     private String salario = "";
     private Integer intNascimento = 0;
     private Timestamp nascimento = null;
+    private Integer intDataSocio = 0;
+    private Timestamp dataSocio = null;
     private String natural = "";
     private String religiao = "";
     private boolean primeiraComunhao = false;
@@ -143,6 +145,22 @@ public class DBPessoa {
 
     public void setNascimento(Timestamp nascimento) {
         this.nascimento = nascimento;
+    }
+
+    public Integer getIntDataSocio() {
+        return intDataSocio;
+    }
+
+    public void setIntDataSocio(Integer intDataSocio) {
+        this.intDataSocio = intDataSocio;
+    }
+
+    public Timestamp getDataSocio() {
+        return dataSocio;
+    }
+
+    public void setDataSocio(Timestamp dataSocio) {
+        this.dataSocio = dataSocio;
     }
 
     public String getNatural() {
