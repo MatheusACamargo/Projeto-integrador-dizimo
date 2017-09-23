@@ -5,19 +5,21 @@
  */
 package projeto.integrador.dizimo;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author 0132945
+ * @author Lucas
  */
-public class TelaFicha extends javax.swing.JFrame {
+public class TelaFicha extends javax.swing.JDialog {
+    private Funcao fun;
 
     /**
-     * Creates new form TelaFicha
+     * Creates new form TelaFichaNova
      */
-    public TelaFicha() {
+    public TelaFicha(java.awt.Dialog parent, boolean modal, Funcao fun) {
+        super(parent, modal);
+        this.fun = fun;
         initComponents();
     }
 
@@ -30,6 +32,9 @@ public class TelaFicha extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lbHistorico = new javax.swing.JLabel();
+        pbPessoas = new javax.swing.JButton();
+        pbOk = new javax.swing.JButton();
         lbNumero = new javax.swing.JLabel();
         tfNumero = new javax.swing.JTextField();
         tfResponsavel = new javax.swing.JTextField();
@@ -38,17 +43,26 @@ public class TelaFicha extends javax.swing.JFrame {
         tfEndereco = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbPagamentos = new javax.swing.JTable();
-        lbHistorico = new javax.swing.JLabel();
-        pbPessoas = new javax.swing.JButton();
-        pbOk = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Ficha do dízimo");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
             }
         });
+
+        lbHistorico.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lbHistorico.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbHistorico.setText("Histórico das contribuições");
+
+        pbPessoas.setText("Pessoas");
+        pbPessoas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pbPessoasActionPerformed(evt);
+            }
+        });
+
+        pbOk.setText("OK");
 
         lbNumero.setText("Número");
 
@@ -80,22 +94,6 @@ public class TelaFicha extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(tbPagamentos);
-        if (tbPagamentos.getColumnModel().getColumnCount() > 0) {
-            tbPagamentos.getColumnModel().getColumn(13).setPreferredWidth(100);
-        }
-
-        lbHistorico.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        lbHistorico.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbHistorico.setText("Histórico das contribuições");
-
-        pbPessoas.setText("Pessoas");
-        pbPessoas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pbPessoasActionPerformed(evt);
-            }
-        });
-
-        pbOk.setText("OK");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -116,12 +114,12 @@ public class TelaFicha extends javax.swing.JFrame {
                             .addComponent(tfResponsavel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pbPessoas)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(293, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbHistorico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 722, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(pbOk)))
@@ -155,6 +153,11 @@ public class TelaFicha extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void pbPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbPessoasActionPerformed
+        TelaPessoasFicha tPessoas = new TelaPessoasFicha(this, true);
+        tPessoas.setVisible(true);
+    }//GEN-LAST:event_pbPessoasActionPerformed
+
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         DefaultTableModel dtmPagamentos = (DefaultTableModel) tbPagamentos.getModel();
         Object[] rowDefault = {2017, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-",0};
@@ -163,11 +166,6 @@ public class TelaFicha extends javax.swing.JFrame {
             dtmPagamentos.addRow(rowDefault);
         }
     }//GEN-LAST:event_formWindowOpened
-
-    private void pbPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbPessoasActionPerformed
-        TelaPessoasFicha tPessoas = new TelaPessoasFicha(this, true);
-        tPessoas.setVisible(true);
-    }//GEN-LAST:event_pbPessoasActionPerformed
 
     /**
      * @param args the command line arguments
@@ -195,11 +193,19 @@ public class TelaFicha extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(TelaFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TelaFicha().setVisible(true);
+                TelaFicha dialog = new TelaFicha(new javax.swing.JDialog(), true, Funcao.INCLUSAO);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
