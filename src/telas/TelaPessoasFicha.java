@@ -3,18 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package projeto.integrador.dizimo;
+package telas;
 
 /**
  *
- * @author Lucas
+ * @author 0132945
  */
-public class GridFichas extends javax.swing.JDialog {
+public class TelaPessoasFicha extends javax.swing.JDialog {
 
     /**
-     * Creates new form GridFichas
+     * Creates new form TelaPessoasFicha
      */
-    public GridFichas(java.awt.Frame parent, boolean modal) {
+    public TelaPessoasFicha(java.awt.Dialog parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -28,22 +28,45 @@ public class GridFichas extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pbConsultar = new javax.swing.JButton();
-        pbExcluir = new javax.swing.JButton();
-        lbFiltro = new javax.swing.JLabel();
-        tfFiltro = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tFichas = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable();
         pbIncluir = new javax.swing.JButton();
+        pbExcluir = new javax.swing.JButton();
+        pbOk = new javax.swing.JButton();
         pbAlterar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Tabela de fichas");
+        setTitle("Pessoas da ficha");
 
-        pbConsultar.setText("Consultar");
-        pbConsultar.addActionListener(new java.awt.event.ActionListener() {
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Pessoa", "Data Inicial", "Data Final"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
+
+        pbIncluir.setText("Incluir");
+        pbIncluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pbConsultarActionPerformed(evt);
+                pbIncluirActionPerformed(evt);
             }
         });
 
@@ -54,36 +77,10 @@ public class GridFichas extends javax.swing.JDialog {
             }
         });
 
-        lbFiltro.setText("Filtro");
-
-        tfFiltro.addActionListener(new java.awt.event.ActionListener() {
+        pbOk.setText("OK");
+        pbOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfFiltroActionPerformed(evt);
-            }
-        });
-
-        tFichas.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Número", "Responsável", "Endereço"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(tFichas);
-
-        pbIncluir.setText("Incluir");
-        pbIncluir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pbIncluirActionPerformed(evt);
+                pbOkActionPerformed(evt);
             }
         });
 
@@ -101,19 +98,17 @@ public class GridFichas extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 568, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(pbOk))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(pbIncluir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pbAlterar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pbConsultar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pbExcluir)
-                        .addGap(18, 18, 18)
-                        .addComponent(lbFiltro)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tfFiltro)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -121,43 +116,37 @@ public class GridFichas extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(pbConsultar)
-                    .addComponent(pbExcluir)
-                    .addComponent(lbFiltro)
-                    .addComponent(tfFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pbIncluir)
+                    .addComponent(pbExcluir)
                     .addComponent(pbAlterar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pbOk)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void pbConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbConsultarActionPerformed
-        TelaFicha tf = new TelaFicha(this, true, Funcao.CONSULTA);
-        tf.setVisible(true);
-    }//GEN-LAST:event_pbConsultarActionPerformed
-
-    private void pbExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbExcluirActionPerformed
-        TelaFicha tf = new TelaFicha(this, true, Funcao.EXCLUSAO);
-        tf.setVisible(true);
-    }//GEN-LAST:event_pbExcluirActionPerformed
-
     private void pbIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbIncluirActionPerformed
-        TelaFicha tf = new TelaFicha(this, true, Funcao.INCLUSAO);
-        tf.setVisible(true);
+        TelaVinculacao tVinculacao = new TelaVinculacao(this, true);
+        tVinculacao.setVisible(true);
     }//GEN-LAST:event_pbIncluirActionPerformed
 
-    private void pbAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbAlterarActionPerformed
-        TelaFicha tf = new TelaFicha(this, true, Funcao.ALTERACAO);
-        tf.setVisible(true);
-    }//GEN-LAST:event_pbAlterarActionPerformed
+    private void pbExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbExcluirActionPerformed
+        TelaVinculacao tVinculacao = new TelaVinculacao(this, true);
+        tVinculacao.setVisible(true);
+    }//GEN-LAST:event_pbExcluirActionPerformed
 
-    private void tfFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfFiltroActionPerformed
+    private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_tfFiltroActionPerformed
+    }//GEN-LAST:event_pbOkActionPerformed
+
+    private void pbAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbAlterarActionPerformed
+        TelaVinculacao tVinculacao = new TelaVinculacao(this, true);
+        tVinculacao.setVisible(true);
+    }//GEN-LAST:event_pbAlterarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -176,20 +165,20 @@ public class GridFichas extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GridFichas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaPessoasFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GridFichas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaPessoasFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GridFichas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaPessoasFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GridFichas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaPessoasFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                GridFichas dialog = new GridFichas(new javax.swing.JFrame(), true);
+                TelaPessoasFicha dialog = new TelaPessoasFicha(new javax.swing.JDialog(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -198,17 +187,15 @@ public class GridFichas extends javax.swing.JDialog {
                 });
                 dialog.setVisible(true);
             }
-     });
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lbFiltro;
+    private javax.swing.JTable jTable1;
     private javax.swing.JButton pbAlterar;
-    private javax.swing.JButton pbConsultar;
     private javax.swing.JButton pbExcluir;
     private javax.swing.JButton pbIncluir;
-    private javax.swing.JTable tFichas;
-    private javax.swing.JTextField tfFiltro;
+    private javax.swing.JButton pbOk;
     // End of variables declaration//GEN-END:variables
 }

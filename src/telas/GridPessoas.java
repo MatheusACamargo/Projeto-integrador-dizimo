@@ -3,18 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package projeto.integrador.dizimo;
+package telas;
+
+import dizimo.Funcao;
 
 /**
  *
  * @author Usuario
  */
-public class GridEnderecos extends javax.swing.JDialog {
+public class GridPessoas extends javax.swing.JDialog {
 
     /**
-     * Creates new form GridEnderecos
+     * Creates new form GridPessoas
      */
-    public GridEnderecos(java.awt.Frame parent, boolean modal) {
+    public GridPessoas(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -28,27 +30,47 @@ public class GridEnderecos extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btExcluir = new javax.swing.JButton();
-        btConsultar = new javax.swing.JButton();
-        btAlterar = new javax.swing.JButton();
-        btIncluir = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        tfFiltro = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tPessoas = new javax.swing.JTable();
+        btIncluir = new javax.swing.JButton();
+        btAlterar = new javax.swing.JButton();
+        btConsultar = new javax.swing.JButton();
+        btExcluir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Tabela de Endereços");
+        setTitle("Tabela de Pessoas");
 
-        btExcluir.setText("Excluir");
-        btExcluir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btExcluirActionPerformed(evt);
+        jLabel1.setText("Filtro");
+
+        tfFiltro.setText(" ");
+
+        tPessoas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Código", "Nome ", "Endereço", "Ficha Atual"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
+        jScrollPane1.setViewportView(tPessoas);
 
-        btConsultar.setText("Consultar");
-        btConsultar.addActionListener(new java.awt.event.ActionListener() {
+        btIncluir.setText("Incluir");
+        btIncluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btConsultarActionPerformed(evt);
+                btIncluirActionPerformed(evt);
             }
         });
 
@@ -59,33 +81,19 @@ public class GridEnderecos extends javax.swing.JDialog {
             }
         });
 
-        btIncluir.setText("Incluir");
-        btIncluir.addActionListener(new java.awt.event.ActionListener() {
+        btConsultar.setText("Consultar");
+        btConsultar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btIncluirActionPerformed(evt);
+                btConsultarActionPerformed(evt);
             }
         });
 
-        tPessoas.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
-            },
-            new String [] {
-                "Código", "Logradouro", "Complemento"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+        btExcluir.setText("Excluir");
+        btExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btExcluirActionPerformed(evt);
             }
         });
-        jScrollPane1.setViewportView(tPessoas);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -94,6 +102,7 @@ public class GridEnderecos extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btIncluir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -102,8 +111,10 @@ public class GridEnderecos extends javax.swing.JDialog {
                         .addComponent(btConsultar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btExcluir)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 532, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfFiltro, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -114,7 +125,9 @@ public class GridEnderecos extends javax.swing.JDialog {
                     .addComponent(btIncluir)
                     .addComponent(btAlterar)
                     .addComponent(btConsultar)
-                    .addComponent(btExcluir))
+                    .addComponent(btExcluir)
+                    .addComponent(jLabel1)
+                    .addComponent(tfFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
                 .addContainerGap())
@@ -124,23 +137,23 @@ public class GridEnderecos extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btIncluirActionPerformed
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.INCLUSAO);
-        te.setVisible(true);
+        TelaPessoa tp = new TelaPessoa(this, true, Funcao.INCLUSAO);
+        tp.setVisible(true);
     }//GEN-LAST:event_btIncluirActionPerformed
 
     private void btAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAlterarActionPerformed
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.ALTERACAO);
-        te.setVisible(true);
+        TelaPessoa tp = new TelaPessoa(this, true, Funcao.ALTERACAO);
+        tp.setVisible(true);
     }//GEN-LAST:event_btAlterarActionPerformed
 
     private void btConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btConsultarActionPerformed
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.CONSULTA);
-        te.setVisible(true);
+        TelaPessoa tp = new TelaPessoa(this, true, Funcao.CONSULTA);
+        tp.setVisible(true);
     }//GEN-LAST:event_btConsultarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.EXCLUSAO);
-        te.setVisible(true);
+        TelaPessoa tp = new TelaPessoa(this, true, Funcao.EXCLUSAO);
+        tp.setVisible(true);
     }//GEN-LAST:event_btExcluirActionPerformed
 
     /**
@@ -160,20 +173,20 @@ public class GridEnderecos extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GridEnderecos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GridPessoas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GridEnderecos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GridPessoas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GridEnderecos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GridPessoas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GridEnderecos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GridPessoas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                GridEnderecos dialog = new GridEnderecos(new javax.swing.JFrame(), true);
+                GridPessoas dialog = new GridPessoas(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -190,7 +203,9 @@ public class GridEnderecos extends javax.swing.JDialog {
     private javax.swing.JButton btConsultar;
     private javax.swing.JButton btExcluir;
     private javax.swing.JButton btIncluir;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tPessoas;
+    private javax.swing.JTextField tfFiltro;
     // End of variables declaration//GEN-END:variables
 }

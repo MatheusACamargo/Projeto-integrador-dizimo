@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package projeto.integrador.dizimo;
+package dizimo;
 
 import java.awt.Frame;
 import javax.swing.JOptionPane;
-import projeto.integrador.dizimo.database.Conexao;
+import database.Conexao;
 
 /**
  *

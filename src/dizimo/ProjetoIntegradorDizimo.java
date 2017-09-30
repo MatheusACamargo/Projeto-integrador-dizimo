@@ -1,4 +1,6 @@
-package projeto.integrador.dizimo;
+package dizimo;
+
+import telas.TelaPrincipal;
 
 public class ProjetoIntegradorDizimo {
 
