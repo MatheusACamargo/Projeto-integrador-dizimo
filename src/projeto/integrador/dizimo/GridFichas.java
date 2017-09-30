@@ -38,6 +38,7 @@ public class GridFichas extends javax.swing.JDialog {
         pbAlterar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Tabela de fichas");
 
         pbConsultar.setText("Consultar");
         pbConsultar.addActionListener(new java.awt.event.ActionListener() {
@@ -53,14 +54,17 @@ public class GridFichas extends javax.swing.JDialog {
             }
         });
 
-        lbFiltro.setText("Filtro endereço");
+        lbFiltro.setText("Filtro");
+
+        tfFiltro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfFiltroActionPerformed(evt);
+            }
+        });
 
         tFichas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "Número", "Responsável", "Endereço"
@@ -150,6 +154,10 @@ public class GridFichas extends javax.swing.JDialog {
         TelaFicha tf = new TelaFicha(this, true, Funcao.ALTERACAO);
         tf.setVisible(true);
     }//GEN-LAST:event_pbAlterarActionPerformed
+
+    private void tfFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfFiltroActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfFiltroActionPerformed
 
     /**
      * @param args the command line arguments
