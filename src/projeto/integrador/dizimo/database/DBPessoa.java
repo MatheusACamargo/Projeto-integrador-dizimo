@@ -1,4 +1,4 @@
-package projeto.integrador.dizimo;
+package projeto.integrador.dizimo.database;
 
 import java.sql.Timestamp;
 
