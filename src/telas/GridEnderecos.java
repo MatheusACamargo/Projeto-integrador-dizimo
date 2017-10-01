@@ -126,22 +126,22 @@ public class GridEnderecos extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btIncluirActionPerformed
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.INCLUSAO);
+        TelaEndereco te = new TelaEndereco(this, true, Funcao.INCLUSAO, 0);
         te.setVisible(true);
     }//GEN-LAST:event_btIncluirActionPerformed
 
     private void btAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAlterarActionPerformed
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.ALTERACAO);
+        TelaEndereco te = new TelaEndereco(this, true, Funcao.ALTERACAO, 0);
         te.setVisible(true);
     }//GEN-LAST:event_btAlterarActionPerformed
 
     private void btConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btConsultarActionPerformed
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.CONSULTA);
+        TelaEndereco te = new TelaEndereco(this, true, Funcao.CONSULTA, 0);
         te.setVisible(true);
     }//GEN-LAST:event_btConsultarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.EXCLUSAO);
+        TelaEndereco te = new TelaEndereco(this, true, Funcao.EXCLUSAO, 0);
         te.setVisible(true);
     }//GEN-LAST:event_btExcluirActionPerformed
 

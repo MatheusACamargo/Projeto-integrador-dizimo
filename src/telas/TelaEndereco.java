@@ -5,7 +5,15 @@
  */
 package telas;
 
+import database.Conexao;
+import database.DBEndereco;
+import database.DBMException;
+import database.DBMLocalizador;
 import dizimo.Funcao;
+import java.awt.Frame;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,15 +22,29 @@ import dizimo.Funcao;
 public class TelaEndereco extends javax.swing.JDialog {
     private Funcao fun;
     private boolean OK;
+    private DBEndereco end;
+    private DBMLocalizador<DBEndereco> loc;
+    
 
     /**
      * Creates new form TelaEndereco
      */
-    public TelaEndereco(java.awt.Dialog parent, boolean modal, Funcao fun) {
+    public TelaEndereco(java.awt.Dialog parent, boolean modal, Funcao fun, int codigo) {
         super(parent, modal);
         this.fun = fun;
         OK = false;
         initComponents();
+        if(fun == Funcao.INCLUSAO){
+            end = new DBEndereco();
+        }else{
+            try {
+                loc = new DBMLocalizador<>(DBEndereco.class);
+                end = loc.procuraRegistro(codigo);
+            } catch (DBMException e) {
+                 JOptionPane.showMessageDialog(this, "Endereço de código " + codigo + " não foi lido corretamente do banco!");
+                 dispose();
+            }
+        }
     }
 
     /**
@@ -189,7 +211,7 @@ public class TelaEndereco extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                TelaEndereco dialog = new TelaEndereco(new javax.swing.JDialog(), true, Funcao.INCLUSAO);
+                TelaEndereco dialog = new TelaEndereco(new javax.swing.JDialog(), true, Funcao.ALTERACAO, 0);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
