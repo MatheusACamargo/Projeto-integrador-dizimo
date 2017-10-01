@@ -9,6 +9,11 @@ import java.awt.Frame;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -18,6 +23,7 @@ import javax.swing.JOptionPane;
 public class Conexao {
     private static Conexao mySelf;
     private Connection cnx;
+    private static SimpleDateFormat sdf;
     
     private Conexao(){
         try {
@@ -34,24 +40,41 @@ public class Conexao {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {
-
         }
     }
 
-    public static Conexao getInstance() throws DBMException{
-        if(mySelf == null){//se ainda não há instância criada
-            mySelf = new Conexao();
-            new DBMPersistor(new DBEndereco()   ).criarTabela();
-            new DBMPersistor(new DBFicha()      ).criarTabela();
-            new DBMPersistor(new DBFichaPessoa()).criarTabela();
-            new DBMPersistor(new DBPagamento()  ).criarTabela();
-            new DBMPersistor(new DBPessoa()     ).criarTabela();
+    public static Conexao getInstance(){
+        if(mySelf == null){
+            try {
+            //se ainda não há instância criada
+                mySelf = new Conexao();
+                new DBMPersistor(new DBEndereco()   ).criarTabela();
+                new DBMPersistor(new DBFicha()      ).criarTabela();
+                new DBMPersistor(new DBFichaPessoa()).criarTabela();
+                new DBMPersistor(new DBPagamento()  ).criarTabela();
+                new DBMPersistor(new DBPessoa()     ).criarTabela();
+                sdf = new SimpleDateFormat("yyyy-MM-dd");
+            } catch (DBMException e) {
+            }
         }
         return mySelf;
     }
 
     public Connection getCnx() {
         return cnx;
+    }
+    
+    public String dateToString(Date data){
+        return sdf.format(data);
+    }
+    
+    public Date stringToDate(String data){
+        try {
+            return sdf.parse(data);
+        } catch (ParseException ex) {
+            Logger.getLogger(Conexao.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
     public void closeConnection(){

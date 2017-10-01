@@ -21,9 +21,8 @@ import java.util.logging.Logger;
  */
 public class Testes {
     public static void main(String[] args) {
-        try {
-            Connection cnx = Conexao.getInstance().getCnx();
-        } catch (DBMException e) {
+        Connection cnx = Conexao.getInstance().getCnx();
+        if(cnx == null) {
             System.exit(0);
         }
 
@@ -45,9 +44,6 @@ public class Testes {
 //			persistor.exclui(6);
 
         JOptionPane.showMessageDialog(new Frame(), "Aguardando..");
-        try {
-            Conexao.getInstance().closeConnection();
-        } catch (DBMException ex) {
-        }
+        Conexao.getInstance().closeConnection();
     }  
 }
