@@ -9,8 +9,10 @@ package database;
  *
  * @author Usuario
  */
+@DBMNomeTabela(nome = "Endereco")
 public class DBEndereco {
 
+    @DBMPK
     private Integer codigo = 0;
     private String logradouro = "";
     private Integer cep = 0;

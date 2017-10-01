@@ -11,15 +11,21 @@ import java.sql.Timestamp;
  *
  * @author Lucas
  */
+@DBMNomeTabela(nome = "FichaPessoa")
 public class DBFichaPessoa {
+    @DBMPK
     private Integer codigo;
     private Integer intFicha;
+    @DBMExcluido
     private DBFicha ficha;
     private Integer intDBPessoa;
+    @DBMExcluido
     private DBPessoa pessoa;
     private Integer intDataInicial;
+    @DBMExcluido
     private Timestamp dataInicial;
     private Integer intDataFinal;
+    @DBMExcluido
     private Timestamp dataFinal;
 
     public DBFichaPessoa() {

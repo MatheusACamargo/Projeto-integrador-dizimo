@@ -6,11 +6,14 @@ import java.sql.Timestamp;
  *
  * @author Usuario
  */
+@DBMNomeTabela(nome = "Pessoa")
 public class DBPessoa {
+    @DBMPK
     private Integer codigo = 0;
     private Integer numFichaAtual = 0;
     private String nome = "";
     private Integer intEndereco = 0;
+    @DBMExcluido
     private DBEndereco endereco = null;
     private Integer numCasa = 0;
     private Integer telefone = 0;
@@ -20,8 +23,10 @@ public class DBPessoa {
     private String casa = "";
     private String salario = "";
     private Integer intNascimento = 0;
+    @DBMExcluido
     private Timestamp nascimento = null;
     private Integer intDataSocio = 0;
+    @DBMExcluido
     private Timestamp dataSocio = null;
     private String natural = "";
     private String religiao = "";

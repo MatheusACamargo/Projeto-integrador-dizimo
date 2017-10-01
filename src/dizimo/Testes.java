@@ -8,6 +8,12 @@ package dizimo;
 import java.awt.Frame;
 import javax.swing.JOptionPane;
 import database.Conexao;
+import database.DBEndereco;
+import database.DBMException;
+import database.DBMPersistor;
+import java.sql.Connection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -15,8 +21,33 @@ import database.Conexao;
  */
 public class Testes {
     public static void main(String[] args) {
-        Conexao.getInstance();
+        try {
+            Connection cnx = Conexao.getInstance().getCnx();
+        } catch (DBMException e) {
+            System.exit(0);
+        }
+
+        DBEndereco end = new DBEndereco();
+        end.setCodigo(1);
+        end.setLogradouro("Rua tal e tal");
+        end.setCep(93351120);
+        end.setDescricaoComplementar("Nro 999");
+        end.setVila("nome da vila");
+        end.setBairro("Roselandia");
+
+        DBMPersistor pEnd;
+        try {
+            pEnd = new DBMPersistor(end);
+            pEnd.insere();
+        } catch (DBMException e) {
+        }
+//			persistor.altera(6);
+//			persistor.exclui(6);
+
         JOptionPane.showMessageDialog(new Frame(), "Aguardando..");
-        Conexao.getInstance().closeConnection();
+        try {
+            Conexao.getInstance().closeConnection();
+        } catch (DBMException ex) {
+        }
     }  
 }

@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
  */
 public class Conexao {
     private static Conexao mySelf;
-    private Connection conn;
+    private Connection cnx;
     
     private Conexao(){
         try {
@@ -27,7 +27,7 @@ public class Conexao {
             // db parameters
             String url = "jdbc:sqlite:" + path + "/dizimo.db";
             // cria a conexão com a base de dados
-            conn = DriverManager.getConnection(url);
+            cnx = DriverManager.getConnection(url);
             
             JOptionPane.showMessageDialog(new Frame(), "Conexão com SQLite estabelecida com sucesso!");
             
@@ -38,17 +38,26 @@ public class Conexao {
         }
     }
 
-    public static Conexao getInstance(){
+    public static Conexao getInstance() throws DBMException{
         if(mySelf == null){//se ainda não há instância criada
             mySelf = new Conexao();
+            new DBMPersistor(new DBEndereco()   ).criarTabela();
+            new DBMPersistor(new DBFicha()      ).criarTabela();
+            new DBMPersistor(new DBFichaPessoa()).criarTabela();
+            new DBMPersistor(new DBPagamento()  ).criarTabela();
+            new DBMPersistor(new DBPessoa()     ).criarTabela();
         }
         return mySelf;
     }
 
+    public Connection getCnx() {
+        return cnx;
+    }
+
     public void closeConnection(){
         try {
-            if (conn != null) {
-                conn.close();
+            if (cnx != null) {
+                cnx.close();
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(new Frame(), ex.getMessage());

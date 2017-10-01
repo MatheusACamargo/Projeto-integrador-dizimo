@@ -9,9 +9,12 @@ package database;
  *
  * @author Lucas
  */
+@DBMNomeTabela(nome = "Ficha")
 public class DBFicha {
+    @DBMPK
     private Integer codigo;
     private Integer intResponsavel;
+    @DBMExcluido
     private DBPessoa responsavel;
     private String observacoes;
 

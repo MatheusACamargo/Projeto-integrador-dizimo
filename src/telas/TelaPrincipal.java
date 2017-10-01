@@ -5,6 +5,8 @@
  */
 package telas;
 
+import javax.swing.JFrame;
+
 /**
  *
  * @author 0132945
@@ -16,6 +18,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
      */
     public TelaPrincipal() {
         initComponents();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     /**
