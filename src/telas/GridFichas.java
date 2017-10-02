@@ -5,20 +5,32 @@
  */
 package telas;
 
+import database.DBEndereco;
+import database.DBFicha;
+import database.DBMException;
+import database.DBMLocalizador;
 import dizimo.Funcao;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Lucas
  */
 public class GridFichas extends javax.swing.JDialog {
-
+    private DefaultTableModel dtm;
+    private DBMLocalizador<DBFicha> loc;
+    
     /**
      * Creates new form GridFichas
      */
     public GridFichas(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        dtm = (DefaultTableModel) tFichas.getModel();
     }
 
     /**
@@ -41,6 +53,11 @@ public class GridFichas extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Tabela de fichas");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         pbConsultar.setText("Consultar");
         pbConsultar.addActionListener(new java.awt.event.ActionListener() {
@@ -69,15 +86,22 @@ public class GridFichas extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Número", "Responsável", "Endereço"
+                "Número", "Responsável", "Endereço", "Observações"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jScrollPane1.setViewportView(tFichas);
@@ -161,6 +185,32 @@ public class GridFichas extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_tfFiltroActionPerformed
 
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        List<DBFicha> listFicha;
+        try {
+            //para demais funções busca o registro no banco
+            loc = new DBMLocalizador<>(DBFicha.class);
+            listFicha = loc.procuraRegistros("");
+            if(listFicha != null){
+                for(DBFicha ficha : listFicha){
+                    dtm.insertRow(tFichas.getRowCount(), toRow(ficha));
+                }
+            }
+        } catch (DBMException e) {
+        }
+    }//GEN-LAST:event_formWindowOpened
+
+    private Object[] toRow(DBFicha ficha){
+        Object[] dados = new Object[tFichas.getColumnCount()];
+        dados[0] = ficha.getCodigo();
+        //Responsável
+        //dados[1] = ficha.getLogradouro();
+        //Endereço 
+        //dados[2] = ficha.getDescricaoComplementar();
+        dados[3] = ficha.getObservacoes();
+        return dados;
+    }
+    
     /**
      * @param args the command line arguments
      */

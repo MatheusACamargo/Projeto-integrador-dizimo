@@ -41,14 +41,6 @@ public class TelaFicha extends javax.swing.JDialog {
     public TelaFicha(java.awt.Dialog parent, boolean modal, Funcao fun, int codigo) {
         super(parent, modal);
         this.fun = fun;
-        //Se não for função de consulta
-        if(fun!=Funcao.CONSULTA){
-            try {
-                pFicha = new DBMPersistor(ficha);
-            } catch (DBMException ex) {
-                Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
         initComponents();     
     }
 
@@ -260,6 +252,7 @@ public class TelaFicha extends javax.swing.JDialog {
         ficha.setObservacoes(tfObservacoes.getText());
         if(fun==Funcao.INCLUSAO){
             try {
+                pFicha = new DBMPersistor(ficha);
                 pFicha.insere();
                 dispose();
             } catch (DBMException ex) {
