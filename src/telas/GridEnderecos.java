@@ -5,13 +5,24 @@
  */
 package telas;
 
+import database.DBEndereco;
+import database.DBMException;
+import database.DBMLocalizador;
 import dizimo.Funcao;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Usuario
  */
 public class GridEnderecos extends javax.swing.JDialog {
+    private DefaultTableModel dtm;
+    private DBMLocalizador<DBEndereco> loc;
+
 
     /**
      * Creates new form GridEnderecos
@@ -19,6 +30,7 @@ public class GridEnderecos extends javax.swing.JDialog {
     public GridEnderecos(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        dtm = (DefaultTableModel) tEnderecos.getModel();
     }
 
     /**
@@ -35,10 +47,15 @@ public class GridEnderecos extends javax.swing.JDialog {
         btAlterar = new javax.swing.JButton();
         btIncluir = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tPessoas = new javax.swing.JTable();
+        tEnderecos = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Tabela de Endereços");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         btExcluir.setText("Excluir");
         btExcluir.addActionListener(new java.awt.event.ActionListener() {
@@ -68,12 +85,9 @@ public class GridEnderecos extends javax.swing.JDialog {
             }
         });
 
-        tPessoas.setModel(new javax.swing.table.DefaultTableModel(
+        tEnderecos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "Código", "Logradouro", "Complemento"
@@ -87,7 +101,7 @@ public class GridEnderecos extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(tPessoas);
+        jScrollPane1.setViewportView(tEnderecos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -126,25 +140,74 @@ public class GridEnderecos extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btIncluirActionPerformed
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.INCLUSAO);
+        TelaEndereco te = new TelaEndereco(this, true, Funcao.INCLUSAO, 0);
         te.setVisible(true);
+        if(te.isOK()){
+            dtm.insertRow(tEnderecos.getRowCount(), toRow(te.getEnd()));
+        }
+                
     }//GEN-LAST:event_btIncluirActionPerformed
 
     private void btAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAlterarActionPerformed
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.ALTERACAO);
+        int row = tEnderecos.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
+            return;
+        }
+        TelaEndereco te = new TelaEndereco(this, true, Funcao.ALTERACAO, (int) tEnderecos.getValueAt(tEnderecos.getSelectedRow(), 0));
         te.setVisible(true);
+        if(te.isOK()){
+            dtm.removeRow(row);
+            dtm.insertRow(row, toRow(te.getEnd()));
+        }
     }//GEN-LAST:event_btAlterarActionPerformed
 
     private void btConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btConsultarActionPerformed
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.CONSULTA);
+        if(tEnderecos.getSelectedRow() == -1){
+            JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
+            return;
+        }
+        TelaEndereco te = new TelaEndereco(this, true, Funcao.CONSULTA, (int) tEnderecos.getValueAt(tEnderecos.getSelectedRow(), 0));
         te.setVisible(true);
     }//GEN-LAST:event_btConsultarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.EXCLUSAO);
+        int row = tEnderecos.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
+            return;
+        }
+        TelaEndereco te = new TelaEndereco(this, true, Funcao.EXCLUSAO, (int) tEnderecos.getValueAt(tEnderecos.getSelectedRow(), 0));
         te.setVisible(true);
+        if(te.isOK()){
+            dtm.removeRow(row);
+        }
     }//GEN-LAST:event_btExcluirActionPerformed
 
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        List<DBEndereco> listEnd;
+        try {
+            //para demais funções busca o registro no banco
+            loc = new DBMLocalizador<>(DBEndereco.class);
+            listEnd = loc.procuraRegistros("");
+            if(listEnd != null){
+                for(DBEndereco end : listEnd){
+                    dtm.insertRow(tEnderecos.getRowCount(), toRow(end));
+                }
+            }
+        } catch (DBMException e) {
+        }
+        
+    }//GEN-LAST:event_formWindowOpened
+
+    private Object[] toRow(DBEndereco end){
+        Object[] dados = new Object[tEnderecos.getColumnCount()];
+        dados[0] = end.getCodigo();
+        dados[1] = end.getLogradouro();
+        dados[2] = end.getDescricaoComplementar();
+        return dados;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -193,6 +256,6 @@ public class GridEnderecos extends javax.swing.JDialog {
     private javax.swing.JButton btExcluir;
     private javax.swing.JButton btIncluir;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tPessoas;
+    private javax.swing.JTable tEnderecos;
     // End of variables declaration//GEN-END:variables
 }
