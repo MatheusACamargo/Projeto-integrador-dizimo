@@ -1,6 +1,5 @@
 package database;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -234,6 +233,7 @@ public class DBPessoa {
 
     public void setCrisma(boolean crisma) {
         this.crisma = crisma;
+        intCrisma = crisma ? 1 : 1;
     }
 
     public Integer getIntCrisma() {
@@ -242,6 +242,7 @@ public class DBPessoa {
 
     public void setIntCrisma(Integer intCrisma) {
         this.intCrisma = intCrisma;
+        crisma = intCrisma == 1;
     }
 
     public boolean isPraticante() {
@@ -250,6 +251,7 @@ public class DBPessoa {
 
     public void setPraticante(boolean praticante) {
         this.praticante = praticante;
+        intPraticante = praticante ? 1 : 0;
     }
 
     public Integer getIntPraticante() {
@@ -258,6 +260,7 @@ public class DBPessoa {
 
     public void setIntPraticante(Integer intPraticante) {
         this.intPraticante = intPraticante;
+        praticante = intPraticante == 1;
     }
 
     public String getInstrucao() {

@@ -9,7 +9,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -44,8 +43,9 @@ public class DBMLocalizador<T extends Object>{
         DBMNomeTabela nomeTab = obj.getAnnotation( DBMNomeTabela.class );//tenta conseguir a anotação com o nome da tabela
         nome = nomeTab != null ? nomeTab.nome() : obj.getClass().getSimpleName();//carrega o nome a utilizar para o banco
         Field[] vetorAtributos = obj.getDeclaredFields();//obtêm a lista de campos da classe
+        atributos = new ArrayList<>();
         metodos = obj.getMethods();//obtêm a lista de métodos da classe
-        pk = new ArrayList<Field>();
+        pk = new ArrayList<>();
         for( Field atributo : vetorAtributos ) {
             //Se tem anotação da chave da tabela
             if(atributo.getAnnotation(DBMPK.class) != null){
@@ -71,19 +71,24 @@ public class DBMLocalizador<T extends Object>{
 	
     @SuppressWarnings("unchecked")//sempre vai retornar o tipo T
     public List<T> procuraRegistros(String clausulaWhere, Object... prms) throws DBMException{
-        ArrayList<T> result = new ArrayList<T>();
+        ArrayList<T> result = new ArrayList<>();
         preparaSelect();
-        //gera Statement para execução do comando e substitui todos os curingas
-        cmd.append(" WHERE " + clausulaWhere);
-        preparaStatement(cmd.toString());
-        if(prms != null){
-            for(Object o: prms){
-                try {
-                    ps.setObject(++indCampo, o);
-                } catch (SQLException e) {
-                    throw new DBMException(e);
+        //se tem filtros de registro
+        if(!clausulaWhere.isEmpty()){
+            //gera Statement para execução do comando e substitui todos os curingas
+            cmd.append(" WHERE " + clausulaWhere);
+            preparaStatement(cmd.toString());
+            if(prms != null){
+                for(Object o: prms){
+                    try {
+                        ps.setObject(++indCampo, o);
+                    } catch (SQLException e) {
+                        throw new DBMException(e);
+                    }
                 }
             }
+        }else{
+            preparaStatement(cmd.toString());
         }
 	//tenta localizar registros	
         try {

@@ -138,22 +138,22 @@ public class GridFichas extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pbConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbConsultarActionPerformed
-        TelaFicha tf = new TelaFicha(this, true, Funcao.CONSULTA);
+        TelaFicha tf = new TelaFicha(this, true, Funcao.CONSULTA, 0);
         tf.setVisible(true);
     }//GEN-LAST:event_pbConsultarActionPerformed
 
     private void pbExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbExcluirActionPerformed
-        TelaFicha tf = new TelaFicha(this, true, Funcao.EXCLUSAO);
+        TelaFicha tf = new TelaFicha(this, true, Funcao.EXCLUSAO, 0);
         tf.setVisible(true);
     }//GEN-LAST:event_pbExcluirActionPerformed
 
     private void pbIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbIncluirActionPerformed
-        TelaFicha tf = new TelaFicha(this, true, Funcao.INCLUSAO);
+        TelaFicha tf = new TelaFicha(this, true, Funcao.INCLUSAO, 0);
         tf.setVisible(true);
     }//GEN-LAST:event_pbIncluirActionPerformed
 
     private void pbAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbAlterarActionPerformed
-        TelaFicha tf = new TelaFicha(this, true, Funcao.ALTERACAO);
+        TelaFicha tf = new TelaFicha(this, true, Funcao.ALTERACAO, 0);
         tf.setVisible(true);
     }//GEN-LAST:event_pbAlterarActionPerformed
 

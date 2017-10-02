@@ -117,6 +117,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="OK"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pbOkActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="lbNumero">
       <Properties>
@@ -124,8 +127,14 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="tfNumero">
+      <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="tfNumeroFocusLost"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="tfResponsavel">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lbResponsavel">
       <Properties>
@@ -138,6 +147,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="tfEndereco">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <AuxValues>
@@ -180,7 +192,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTextArea" name="jTextArea1">
+        <Component class="javax.swing.JTextArea" name="tfObservacoes">
           <Properties>
             <Property name="columns" type="int" value="20"/>
             <Property name="rows" type="int" value="5"/>

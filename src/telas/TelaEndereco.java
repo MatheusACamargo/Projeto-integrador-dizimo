@@ -5,7 +5,12 @@
  */
 package telas;
 
+import database.DBEndereco;
+import database.DBMException;
+import database.DBMLocalizador;
+import database.DBMPersistor;
 import dizimo.Funcao;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,13 +19,19 @@ import dizimo.Funcao;
 public class TelaEndereco extends javax.swing.JDialog {
     private Funcao fun;
     private boolean OK;
+    private DBEndereco end;
+    private DBMLocalizador<DBEndereco> loc;
+    private DBMPersistor per;
+    private int codigo;
+    
 
     /**
      * Creates new form TelaEndereco
      */
-    public TelaEndereco(java.awt.Dialog parent, boolean modal, Funcao fun) {
+    public TelaEndereco(java.awt.Dialog parent, boolean modal, Funcao fun, int codigo) {
         super(parent, modal);
         this.fun = fun;
+        this.codigo = codigo;
         OK = false;
         initComponents();
     }
@@ -51,6 +62,11 @@ public class TelaEndereco extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Endereço");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jLabel6.setText("Bairro");
 
@@ -153,10 +169,76 @@ public class TelaEndereco extends javax.swing.JDialog {
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
         dispose();
         OK = true;
+        //Elimina formato de aceitação do CEP
+        String cep = ftCep.getText();
+        cep = cep.replace(".", "");
+        cep = cep.replace("-", "");
+        //carrega os campos do objeto com o conteúdo da tela
+        end.setBairro(tfBairro.getText());
+        end.setCep(Integer.parseInt(cep));
+        end.setCodigo(Integer.parseInt(tfCodigo.getText()));
+        end.setLogradouro(tfLogradouro.getText());
+        end.setDescricaoComplementar(tfDescComplem.getText());
+        end.setVila(tfVila.getText());
+        try {
+
+            switch(fun){
+                case INCLUSAO:
+                    per.insere();
+                    break;
+                case ALTERACAO:
+                    per.altera();
+                    break;
+                case EXCLUSAO:
+                    per.exclui();
+                    break;
+            }
+        } catch (DBMException e) {
+        }
     }//GEN-LAST:event_btOKActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        try {
+            //Se é inclusão apenas cria um novo objeto
+            if(fun == Funcao.INCLUSAO){
+                end = new DBEndereco();
+            }else{
+                //para demais funções busca o registro no banco
+                loc = new DBMLocalizador<>(DBEndereco.class);
+                end = loc.procuraRegistro(codigo);
+                if(end == null){
+                    JOptionPane.showMessageDialog(this, "Endereço de código " + codigo + " não foi lido corretamente do banco!");
+                    dispose();
+                }
+            }
+            per = new DBMPersistor(end);
+        } catch (DBMException e) {
+        }
+        //se é função que não aceita os dados
+        if(fun == Funcao.CONSULTA || fun == Funcao.EXCLUSAO){
+            //desabilita todos os campos da tela
+            tfBairro.setEnabled(false);
+            ftCep.setEnabled(false);
+            tfCodigo.setEnabled(false);
+            tfLogradouro.setEnabled(false);
+            tfDescComplem.setEnabled(false);
+            tfVila.setEnabled(false);
+        }
+        //carrega os campos da tela com o conteúdo do objeto
+        tfBairro.setText(end.getBairro());
+        ftCep.setText(end.getCep().toString());
+        tfCodigo.setText(end.getCodigo().toString());
+        tfLogradouro.setText(end.getLogradouro());
+        tfDescComplem.setText(end.getDescricaoComplementar());
+        tfVila.setText(end.getVila());
+    }//GEN-LAST:event_formWindowOpened
 
     public boolean isOK() {
         return OK;
+    }
+
+    public DBEndereco getEnd() {
+        return end;
     }
 
     /**
@@ -189,7 +271,7 @@ public class TelaEndereco extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                TelaEndereco dialog = new TelaEndereco(new javax.swing.JDialog(), true, Funcao.INCLUSAO);
+                TelaEndereco dialog = new TelaEndereco(new javax.swing.JDialog(), true, Funcao.ALTERACAO, 0);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

@@ -5,7 +5,7 @@
  */
 package database;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  *
@@ -21,12 +21,12 @@ public class DBFichaPessoa {
     private Integer intDBPessoa;
     @DBMExcluido
     private DBPessoa pessoa;
-    private Integer intDataInicial;
+    private String strDataInicial;
     @DBMExcluido
-    private Timestamp dataInicial;
-    private Integer intDataFinal;
+    private Date dataInicial;
+    private String strDataFinal;
     @DBMExcluido
-    private Timestamp dataFinal;
+    private Date dataFinal;
 
     public DBFichaPessoa() {
     }
@@ -71,36 +71,40 @@ public class DBFichaPessoa {
         this.pessoa = pessoa;
     }
 
-    public Integer getIntDataInicial() {
-        return intDataInicial;
+    public String getStrDataInicial() {
+        return strDataInicial;
     }
 
-    public void setIntDataInicial(Integer intDataInicial) {
-        this.intDataInicial = intDataInicial;
+    public void setstrDataInicial(String intDataInicial) {
+        this.strDataInicial = strDataInicial;
+        dataInicial = Conexao.getInstance().stringToDate(strDataInicial);
     }
 
-    public Timestamp getDataInicial() {
+    public Date getDataInicial() {
         return dataInicial;
     }
 
-    public void setDataInicial(Timestamp dataInicial) {
+    public void setDataInicial(Date dataInicial) {
         this.dataInicial = dataInicial;
+        strDataInicial = Conexao.getInstance().dateToString(dataInicial);
     }
 
-    public Integer getIntDataFinal() {
-        return intDataFinal;
+    public String getStrDataFinal() {
+        return strDataFinal;
     }
 
-    public void setIntDataFinal(Integer intDataFinal) {
-        this.intDataFinal = intDataFinal;
+    public void setStrDataFinal(String intDataFinal) {
+        this.strDataFinal = strDataFinal;
+        dataFinal = Conexao.getInstance().stringToDate(strDataFinal);
     }
 
-    public Timestamp getDataFinal() {
+    public Date getDataFinal() {
         return dataFinal;
     }
 
-    public void setDataFinal(Timestamp dataFinal) {
+    public void setDataFinal(Date dataFinal) {
         this.dataFinal = dataFinal;
+        strDataFinal = Conexao.getInstance().dateToString(dataFinal); 
     }
     
 }

@@ -5,7 +5,16 @@
  */
 package telas;
 
+import database.DBEndereco;
+import database.DBFicha;
+import database.DBMException;
+import database.DBMLocalizador;
+import database.DBMPersistor;
+import database.DBPessoa;
 import dizimo.Funcao;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -14,14 +23,33 @@ import javax.swing.table.DefaultTableModel;
  */
 public class TelaFicha extends javax.swing.JDialog {
     private Funcao fun;
+    private int codigo;
+    
+    private DBFicha ficha;
+    private DBMLocalizador<DBFicha> lFicha;
+    private DBMPersistor pFicha;
+    
+    private DBPessoa responsavel;
+    private DBMLocalizador<DBPessoa> lPessoa;
+    
+    private DBEndereco endereco;
+    private DBMLocalizador<DBEndereco> lEdereco;
 
     /**
      * Creates new form TelaFichaNova
      */
-    public TelaFicha(java.awt.Dialog parent, boolean modal, Funcao fun) {
+    public TelaFicha(java.awt.Dialog parent, boolean modal, Funcao fun, int codigo) {
         super(parent, modal);
         this.fun = fun;
-        initComponents();
+        //Se não for função de consulta
+        if(fun!=Funcao.CONSULTA){
+            try {
+                pFicha = new DBMPersistor(ficha);
+            } catch (DBMException ex) {
+                Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        initComponents();     
     }
 
     /**
@@ -45,7 +73,7 @@ public class TelaFicha extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbPagamentos = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        tfObservacoes = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Manutenção da ficha");
@@ -67,12 +95,27 @@ public class TelaFicha extends javax.swing.JDialog {
         });
 
         pbOk.setText("OK");
+        pbOk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pbOkActionPerformed(evt);
+            }
+        });
 
         lbNumero.setText("Número");
+
+        tfNumero.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tfNumeroFocusLost(evt);
+            }
+        });
+
+        tfResponsavel.setEditable(false);
 
         lbResponsavel.setText("Responsável");
 
         lbEndereco.setText("Endereço");
+
+        tfEndereco.setEditable(false);
 
         tbPagamentos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -99,9 +142,9 @@ public class TelaFicha extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(tbPagamentos);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        tfObservacoes.setColumns(20);
+        tfObservacoes.setRows(5);
+        jScrollPane2.setViewportView(tfObservacoes);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -170,6 +213,30 @@ public class TelaFicha extends javax.swing.JDialog {
     }//GEN-LAST:event_pbPessoasActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        if(fun == Funcao.INCLUSAO){
+            ficha = new DBFicha();
+            //Desabilita campos deixando apenas a chave informada
+            tfResponsavel.setEnabled(false);
+            tfEndereco.setEnabled(false);
+            tbPagamentos.setEnabled(false);
+            pbPessoas.setEnabled(false);
+            tfObservacoes.setEnabled(false);
+            //Habilita campos da chave do registro
+            tfNumero.setEnabled(true);
+        }else{
+            try {
+                //Busca a ficha recebida por parâmetro
+                lFicha = new DBMLocalizador<>(DBFicha.class);
+                ficha = lFicha.procuraRegistro(codigo);
+                //Carrega dados da ficha lida para a manutenção
+                tfNumero.setText(ficha.getCodigo().toString());
+            } catch (DBMException ex) {
+                Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, "Não foi localizada a ficha no banco!");
+                dispose();
+            }
+        }
+        //Carrega conteúdo padrão para a lista de pagamentos
         DefaultTableModel dtmPagamentos = (DefaultTableModel) tbPagamentos.getModel();
         Object[] rowDefault = {2017, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-",0};
         for (int i = 0; i < 20; i++) {
@@ -177,6 +244,29 @@ public class TelaFicha extends javax.swing.JDialog {
             dtmPagamentos.addRow(rowDefault);
         }
     }//GEN-LAST:event_formWindowOpened
+
+    private void tfNumeroFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfNumeroFocusLost
+        //Habilita campos de dados
+        tbPagamentos.setEnabled(true);
+        pbPessoas.setEnabled(true);
+        tfObservacoes.setEnabled(true);
+        //Desabilita campos da chave do registro
+        tfNumero.setEnabled(false);        
+    }//GEN-LAST:event_tfNumeroFocusLost
+
+    private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
+        //Carrega dados da manuteção para a ficha
+        ficha.setCodigo(Integer.parseInt(tfNumero.getText()));
+        ficha.setObservacoes(tfObservacoes.getText());
+        if(fun==Funcao.INCLUSAO){
+            try {
+                pFicha.insere();
+                dispose();
+            } catch (DBMException ex) {
+                Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+            }            
+        }
+    }//GEN-LAST:event_pbOkActionPerformed
 
     /**
      * @param args the command line arguments
@@ -209,7 +299,7 @@ public class TelaFicha extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                TelaFicha dialog = new TelaFicha(new javax.swing.JDialog(), true, Funcao.INCLUSAO);
+                TelaFicha dialog = new TelaFicha(new javax.swing.JDialog(), true, Funcao.INCLUSAO, 0);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -224,7 +314,6 @@ public class TelaFicha extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JLabel lbEndereco;
     private javax.swing.JLabel lbHistorico;
     private javax.swing.JLabel lbNumero;
@@ -234,6 +323,7 @@ public class TelaFicha extends javax.swing.JDialog {
     private javax.swing.JTable tbPagamentos;
     private javax.swing.JTextField tfEndereco;
     private javax.swing.JTextField tfNumero;
+    private javax.swing.JTextArea tfObservacoes;
     private javax.swing.JTextField tfResponsavel;
     // End of variables declaration//GEN-END:variables
 }
