@@ -73,17 +73,22 @@ public class DBMLocalizador<T extends Object>{
     public List<T> procuraRegistros(String clausulaWhere, Object... prms) throws DBMException{
         ArrayList<T> result = new ArrayList<>();
         preparaSelect();
-        //gera Statement para execução do comando e substitui todos os curingas
-        cmd.append(" WHERE " + clausulaWhere);
-        preparaStatement(cmd.toString());
-        if(prms != null){
-            for(Object o: prms){
-                try {
-                    ps.setObject(++indCampo, o);
-                } catch (SQLException e) {
-                    throw new DBMException(e);
+        //se tem filtros de registro
+        if(!clausulaWhere.isEmpty()){
+            //gera Statement para execução do comando e substitui todos os curingas
+            cmd.append(" WHERE " + clausulaWhere);
+            preparaStatement(cmd.toString());
+            if(prms != null){
+                for(Object o: prms){
+                    try {
+                        ps.setObject(++indCampo, o);
+                    } catch (SQLException e) {
+                        throw new DBMException(e);
+                    }
                 }
             }
+        }else{
+            preparaStatement(cmd.toString());
         }
 	//tenta localizar registros	
         try {
