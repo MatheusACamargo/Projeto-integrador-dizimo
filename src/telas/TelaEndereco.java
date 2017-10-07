@@ -19,9 +19,9 @@ import javax.swing.JOptionPane;
 public class TelaEndereco extends javax.swing.JDialog {
     private Funcao fun;
     private boolean OK;
-    private DBEndereco end;
-    private DBMLocalizador<DBEndereco> loc;
-    private DBMPersistor per;
+    private DBEndereco endereco;
+    private DBMLocalizador<DBEndereco> lEndereco;
+    private DBMPersistor pEndereco;
     private int codigo;
     
 
@@ -169,28 +169,24 @@ public class TelaEndereco extends javax.swing.JDialog {
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
         dispose();
         OK = true;
-        //Elimina formato de aceitação do CEP
-        String cep = ftCep.getText();
-        cep = cep.replace(".", "");
-        cep = cep.replace("-", "");
-        //carrega os campos do objeto com o conteúdo da tela
-        end.setBairro(tfBairro.getText());
-        end.setCep(Integer.parseInt(cep));
-        end.setCodigo(Integer.parseInt(tfCodigo.getText()));
-        end.setLogradouro(tfLogradouro.getText());
-        end.setDescricaoComplementar(tfDescComplem.getText());
-        end.setVila(tfVila.getText());
+        //Carrega os campos do objeto com o conteúdo da tela
+        endereco.setBairro(tfBairro.getText());
+        endereco.setCep((Integer) ftCep.getValue());
+        endereco.setCodigo(Integer.parseInt(tfCodigo.getText()));
+        endereco.setLogradouro(tfLogradouro.getText());
+        endereco.setDescricaoComplementar(tfDescComplem.getText());
+        endereco.setVila(tfVila.getText());
         try {
 
             switch(fun){
                 case INCLUSAO:
-                    per.insere();
+                    pEndereco.insere();
                     break;
                 case ALTERACAO:
-                    per.altera();
+                    pEndereco.altera();
                     break;
                 case EXCLUSAO:
-                    per.exclui();
+                    pEndereco.exclui();
                     break;
             }
         } catch (DBMException e) {
@@ -201,17 +197,17 @@ public class TelaEndereco extends javax.swing.JDialog {
         try {
             //Se é inclusão apenas cria um novo objeto
             if(fun == Funcao.INCLUSAO){
-                end = new DBEndereco();
+                endereco = new DBEndereco();
             }else{
                 //para demais funções busca o registro no banco
-                loc = new DBMLocalizador<>(DBEndereco.class);
-                end = loc.procuraRegistro(codigo);
-                if(end == null){
+                lEndereco = new DBMLocalizador<>(DBEndereco.class);
+                endereco = lEndereco.procuraRegistro(codigo);
+                if(endereco == null){
                     JOptionPane.showMessageDialog(this, "Endereço de código " + codigo + " não foi lido corretamente do banco!");
                     dispose();
                 }
             }
-            per = new DBMPersistor(end);
+            pEndereco = new DBMPersistor(endereco);
         } catch (DBMException e) {
         }
         //se é função que não aceita os dados
@@ -225,12 +221,12 @@ public class TelaEndereco extends javax.swing.JDialog {
             tfVila.setEnabled(false);
         }
         //carrega os campos da tela com o conteúdo do objeto
-        tfBairro.setText(end.getBairro());
-        ftCep.setText(end.getCep().toString());
-        tfCodigo.setText(end.getCodigo().toString());
-        tfLogradouro.setText(end.getLogradouro());
-        tfDescComplem.setText(end.getDescricaoComplementar());
-        tfVila.setText(end.getVila());
+        tfBairro.setText(endereco.getBairro());
+        ftCep.setValue(endereco.getCep());
+        tfCodigo.setText(endereco.getCodigo().toString());
+        tfLogradouro.setText(endereco.getLogradouro());
+        tfDescComplem.setText(endereco.getDescricaoComplementar());
+        tfVila.setText(endereco.getVila());
     }//GEN-LAST:event_formWindowOpened
 
     public boolean isOK() {
@@ -238,7 +234,7 @@ public class TelaEndereco extends javax.swing.JDialog {
     }
 
     public DBEndereco getEnd() {
-        return end;
+        return endereco;
     }
 
     /**

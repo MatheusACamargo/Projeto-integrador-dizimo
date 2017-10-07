@@ -10,8 +10,6 @@ import database.DBMException;
 import database.DBMLocalizador;
 import dizimo.Funcao;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -21,7 +19,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class GridEnderecos extends javax.swing.JDialog {
     private DefaultTableModel dtm;
-    private DBMLocalizador<DBEndereco> loc;
+    private DBMLocalizador<DBEndereco> lEndereco;
 
 
     /**
@@ -145,7 +143,6 @@ public class GridEnderecos extends javax.swing.JDialog {
         if(te.isOK()){
             dtm.insertRow(tEnderecos.getRowCount(), toRow(te.getEnd()));
         }
-                
     }//GEN-LAST:event_btIncluirActionPerformed
 
     private void btAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAlterarActionPerformed
@@ -154,7 +151,7 @@ public class GridEnderecos extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
             return;
         }
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.ALTERACAO, (int) tEnderecos.getValueAt(tEnderecos.getSelectedRow(), 0));
+        TelaEndereco te = new TelaEndereco(this, true, Funcao.ALTERACAO, (int) tEnderecos.getValueAt(row, 0));
         te.setVisible(true);
         if(te.isOK()){
             dtm.removeRow(row);
@@ -163,11 +160,12 @@ public class GridEnderecos extends javax.swing.JDialog {
     }//GEN-LAST:event_btAlterarActionPerformed
 
     private void btConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btConsultarActionPerformed
-        if(tEnderecos.getSelectedRow() == -1){
+        int row = tEnderecos.getSelectedRow();
+        if(row == -1){
             JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
             return;
         }
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.CONSULTA, (int) tEnderecos.getValueAt(tEnderecos.getSelectedRow(), 0));
+        TelaEndereco te = new TelaEndereco(this, true, Funcao.CONSULTA, (int) tEnderecos.getValueAt(row, 0));
         te.setVisible(true);
     }//GEN-LAST:event_btConsultarActionPerformed
 
@@ -177,7 +175,7 @@ public class GridEnderecos extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
             return;
         }
-        TelaEndereco te = new TelaEndereco(this, true, Funcao.EXCLUSAO, (int) tEnderecos.getValueAt(tEnderecos.getSelectedRow(), 0));
+        TelaEndereco te = new TelaEndereco(this, true, Funcao.EXCLUSAO, (int) tEnderecos.getValueAt(row, 0));
         te.setVisible(true);
         if(te.isOK()){
             dtm.removeRow(row);
@@ -188,8 +186,8 @@ public class GridEnderecos extends javax.swing.JDialog {
         List<DBEndereco> listEnd;
         try {
             //para demais funções busca o registro no banco
-            loc = new DBMLocalizador<>(DBEndereco.class);
-            listEnd = loc.procuraRegistros("");
+            lEndereco = new DBMLocalizador<>(DBEndereco.class);
+            listEnd = lEndereco.procuraRegistros("");
             if(listEnd != null){
                 for(DBEndereco end : listEnd){
                     dtm.insertRow(tEnderecos.getRowCount(), toRow(end));
@@ -197,7 +195,6 @@ public class GridEnderecos extends javax.swing.JDialog {
             }
         } catch (DBMException e) {
         }
-        
     }//GEN-LAST:event_formWindowOpened
 
     private Object[] toRow(DBEndereco end){

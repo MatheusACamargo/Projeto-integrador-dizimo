@@ -13,6 +13,8 @@ public class DBPessoa {
     private Integer numFichaAtual = 0;
     private String nome = "";
     private Integer intEndereco = 0;
+    @DBMExcluido
+    private DBEndereco endereco = null;
     private Integer numCasa = 0;
     private Integer telefone = 0;
     private String estadoCivil = "";
@@ -78,6 +80,15 @@ public class DBPessoa {
 
     public void setIntEndereco(Integer intEndereco) {
         this.intEndereco = intEndereco;
+    }
+
+    public void setEndereco(DBEndereco endereco) {
+        this.endereco = endereco;
+        intEndereco = endereco.getCodigo();
+    }
+
+    public DBEndereco getEndereco() {
+        return endereco;
     }
 
     public Integer getNumCasa() {

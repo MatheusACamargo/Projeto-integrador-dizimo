@@ -5,8 +5,20 @@
  */
 package telas;
 
+import database.DBEndereco;
+import database.DBMException;
+import database.DBMLocalizador;
+import database.DBMPersistor;
+import database.DBPessoa;
 import dizimo.Funcao;
+import java.awt.Component;
+import java.awt.Container;
 import java.text.NumberFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.text.NumberFormatter;
 
 /**
@@ -15,14 +27,22 @@ import javax.swing.text.NumberFormatter;
  */
 public class TelaPessoa extends javax.swing.JDialog {
     private Funcao fun;
+    private DBPessoa pessoa;
+    private DBEndereco endereco;
     private boolean OK;
+    private DBMLocalizador<DBPessoa> lPessoa;
+    private DBMLocalizador<DBEndereco> lEndereco;
+    private DBMPersistor pPessoa;
+    private int codigo;
+    private List<DBEndereco> enderecos;
 
     /**
      * Creates new form TelaPessoa
      */
-    public TelaPessoa(java.awt.Dialog parent, boolean modal, Funcao fun) {
+    public TelaPessoa(java.awt.Dialog parent, boolean modal, Funcao fun, int codigo) {
         super(parent, modal);
         this.fun = fun;
+        this.codigo = codigo;
         OK = false;
         initComponents();
     }
@@ -36,12 +56,11 @@ public class TelaPessoa extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        tfNumFichaAtual = new javax.swing.JTextField();
         tfNatural = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         tfInstrução = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        tfProfissão = new javax.swing.JTextField();
+        tfProfissao = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         cbPrimeiraComunhao = new javax.swing.JCheckBox();
         jLabel3 = new javax.swing.JLabel();
@@ -50,7 +69,7 @@ public class TelaPessoa extends javax.swing.JDialog {
         cbPraticante = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        btOK = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         ftTelefone = new javax.swing.JFormattedTextField();
         jLabel9 = new javax.swing.JLabel();
@@ -64,7 +83,6 @@ public class TelaPessoa extends javax.swing.JDialog {
         cbCasamentoReligioso = new javax.swing.JCheckBox();
         coCasa = new javax.swing.JComboBox<>();
         jLabel13 = new javax.swing.JLabel();
-        tfCodigo = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
         tfNome = new javax.swing.JTextField();
         coSalario = new javax.swing.JComboBox<>();
@@ -72,13 +90,14 @@ public class TelaPessoa extends javax.swing.JDialog {
         ftNumCasa = new javax.swing.JFormattedTextField(new NumberFormatter(NumberFormat.getInstance()));
         ftDataSocio = new javax.swing.JFormattedTextField();
         jLabel15 = new javax.swing.JLabel();
+        ftNumFichaAtual = new javax.swing.JFormattedTextField(new NumberFormatter(NumberFormat.getInstance()));
+        ftCodigo = new javax.swing.JFormattedTextField(new NumberFormatter(NumberFormat.getInstance()));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Pessoas");
-
-        tfNumFichaAtual.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfNumFichaAtualActionPerformed(evt);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
             }
         });
 
@@ -102,10 +121,10 @@ public class TelaPessoa extends javax.swing.JDialog {
 
         jLabel7.setText("Natural");
 
-        jButton2.setText("OK");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btOK.setText("OK");
+        btOK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btOKActionPerformed(evt);
             }
         });
 
@@ -122,8 +141,6 @@ public class TelaPessoa extends javax.swing.JDialog {
         ftNascimento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/mm/yyyy"))));
 
         jLabel10.setText("Profissão");
-
-        coEndereco.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel11.setText("Endereço");
 
@@ -142,12 +159,6 @@ public class TelaPessoa extends javax.swing.JDialog {
         jLabel14.setText("Salário");
 
         coSalario.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mínimo", "Mais", "Menos" }));
-
-        ftNumCasa.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ftNumCasaActionPerformed(evt);
-            }
-        });
 
         ftDataSocio.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
 
@@ -176,14 +187,14 @@ public class TelaPessoa extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton2))
-                    .addComponent(tfProfissão)
+                        .addComponent(btOK))
+                    .addComponent(tfProfissao)
                     .addComponent(tfNatural, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(coSalario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(coEndereco, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(cbCasamentoCivil)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(cbCasamentoReligioso))
                     .addComponent(coCasa, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(coEstadoCivil, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -203,15 +214,15 @@ public class TelaPessoa extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(tfCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(ftCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel4))
                             .addComponent(cbPraticante))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tfNumFichaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(ftNumFichaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(ftNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
                         .addComponent(jLabel15)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ftDataSocio, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -222,10 +233,10 @@ public class TelaPessoa extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tfCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel4)
-                    .addComponent(tfNumFichaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ftNumFichaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ftCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -235,12 +246,11 @@ public class TelaPessoa extends javax.swing.JDialog {
                     .addComponent(coEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel3)
-                        .addComponent(ftTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(ftNumCasa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(ftTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ftNumCasa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
                 .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(coEstadoCivil, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -285,10 +295,10 @@ public class TelaPessoa extends javax.swing.JDialog {
                     .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tfProfissão, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfProfissao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2)
+                .addComponent(btOK)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -299,19 +309,123 @@ public class TelaPessoa extends javax.swing.JDialog {
         return OK;
     }
 
-    private void tfNumFichaAtualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfNumFichaAtualActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfNumFichaAtualActionPerformed
+    public DBPessoa getPes() {
+        return pessoa;
+    }
 
-    private void ftNumCasaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ftNumCasaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ftNumCasaActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
         dispose();
         OK = true;
-    }//GEN-LAST:event_jButton2ActionPerformed
+        //Carrega os campos do objeto com o conteúdo da tela
+        pessoa.setCodigo((Integer) ftCodigo.getValue());
+        pessoa.setNumFichaAtual((Integer) ftNumFichaAtual.getValue());
+        pessoa.setNome(tfNome.getText());
+        try {
+            enderecos = lEndereco.procuraRegistros("logradouro LIKE ?", coEndereco.getSelectedItem());
+            endereco = enderecos.get(0);
+        } catch (DBMException ex) {
+        }
+        pessoa.setEndereco(endereco);
+        pessoa.setNumCasa((Integer) ftNumCasa.getValue());
+        pessoa.setTelefone((Integer) ftTelefone.getValue());
+        pessoa.setEstadoCivil((String) coEstadoCivil.getSelectedItem());
+        pessoa.setCasamentoReligioso(cbCasamentoReligioso.isSelected());
+        pessoa.setCasamentoCivil(cbCasamentoCivil.isSelected());
+        pessoa.setCasa((String) coCasa.getSelectedItem());
+        pessoa.setSalario((String) coSalario.getSelectedItem());
+        pessoa.setNascimento((Date) ftNascimento.getValue());
+        pessoa.setDataSocio((Date) ftDataSocio.getValue());
+        pessoa.setNatural(tfNatural.getText());
+        pessoa.setReligiao(tfReligiao.getText());
+        pessoa.setPrimeiraComunhao(cbPrimeiraComunhao.isSelected());
+        pessoa.setCrisma(cbCrisma.isSelected());
+        pessoa.setPraticante(cbPraticante.isSelected());
+        pessoa.setInstrucao(tfInstrução.getText());
+        pessoa.setProfissao(tfProfissao.getText());
+        try {
 
+            switch(fun){
+                case INCLUSAO:
+                    pPessoa.insere();
+                    break;
+                case ALTERACAO:
+                    pPessoa.altera();
+                    break;
+                case EXCLUSAO:
+                    pPessoa.exclui();
+                    break;
+            }
+        } catch (DBMException e) {
+        }
+    }//GEN-LAST:event_btOKActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        try {
+            //Se é inclusão apenas cria um novo objeto
+            if(fun == Funcao.INCLUSAO){
+                pessoa = new DBPessoa();
+            }else{
+                //para demais funções busca o registro no banco
+                lPessoa = new DBMLocalizador<>(DBPessoa.class);
+                pessoa = lPessoa.procuraRegistro(codigo);
+                if(pessoa == null){
+                    JOptionPane.showMessageDialog(this, "Pessoa de código " + codigo + " não foi lida corretamente do banco!");
+                    dispose();
+                }
+            }
+            pPessoa = new DBMPersistor(pessoa);
+            //Prepara montagem das opções de endereços
+            lEndereco = new DBMLocalizador<>(DBEndereco.class);
+            enderecos = lEndereco.procuraRegistros("");
+            endereco = lEndereco.procuraRegistro(pessoa.getIntEndereco());
+
+        } catch (DBMException e) {
+        }
+        //se é função que não aceita os dados
+        if(fun == Funcao.CONSULTA || fun == Funcao.EXCLUSAO){
+            //desabilita todos os campos da tela
+            habilitaComponentes(this, false);
+        }
+        //carrega os campos da tela com o conteúdo do objeto
+        ftCodigo.setValue(pessoa.getCodigo());
+        ftNumFichaAtual.setValue(pessoa.getNumFichaAtual());
+        tfNome.setText(pessoa.getNome());
+        for (DBEndereco end : enderecos) {
+            coEndereco.addItem(end.getLogradouro());
+        }
+        if(endereco != null){
+            coEndereco.setSelectedItem(endereco.getLogradouro());
+        }else{
+            coEndereco.setSelectedItem(0);
+        }
+        ftNumCasa.setText(pessoa.getNumCasa().toString());
+        ftTelefone.setValue(pessoa.getTelefone());
+        coEstadoCivil.setSelectedItem(pessoa.getEstadoCivil());
+        cbCasamentoCivil.setSelected(pessoa.isCasamentoCivil());
+        cbCasamentoReligioso.setSelected(pessoa.isCasamentoReligioso());
+        coCasa.setSelectedItem(pessoa.getCasa());
+        coSalario.setSelectedItem(pessoa.getSalario());
+        ftNascimento.setValue(pessoa.getNascimento());
+        ftDataSocio.setValue(pessoa.getDataSocio());
+        tfNatural.setText(pessoa.getNatural());
+        tfReligiao.setText(pessoa.getReligiao());
+        cbPrimeiraComunhao.setSelected(pessoa.isPrimeiraComunhao());
+        cbCrisma.setSelected(pessoa.isCrisma());
+        cbPraticante.setSelected(pessoa.isPraticante());
+        tfInstrução.setText(pessoa.getInstrucao());
+        tfProfissao.setText(pessoa.getProfissao());
+    }//GEN-LAST:event_formWindowOpened
+
+    public void habilitaComponentes(Container container, boolean enable) {
+        Component[] components = container.getComponents();
+        for (Component component : components) {
+            component.setEnabled(enable);
+            if (component instanceof Container) {
+                habilitaComponentes((Container)component, enable);
+            }
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -342,7 +456,7 @@ public class TelaPessoa extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                TelaPessoa dialog = new TelaPessoa(new javax.swing.JDialog(), true, Funcao.INCLUSAO);
+                TelaPessoa dialog = new TelaPessoa(new javax.swing.JDialog(), true, Funcao.INCLUSAO, 0);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -355,6 +469,7 @@ public class TelaPessoa extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btOK;
     private javax.swing.JCheckBox cbCasamentoCivil;
     private javax.swing.JCheckBox cbCasamentoReligioso;
     private javax.swing.JCheckBox cbCrisma;
@@ -364,11 +479,12 @@ public class TelaPessoa extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> coEndereco;
     private javax.swing.JComboBox<String> coEstadoCivil;
     private javax.swing.JComboBox<String> coSalario;
+    private javax.swing.JFormattedTextField ftCodigo;
     private javax.swing.JFormattedTextField ftDataSocio;
     private javax.swing.JFormattedTextField ftNascimento;
     private javax.swing.JFormattedTextField ftNumCasa;
+    private javax.swing.JFormattedTextField ftNumFichaAtual;
     private javax.swing.JFormattedTextField ftTelefone;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -384,12 +500,10 @@ public class TelaPessoa extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JTextField tfCodigo;
     private javax.swing.JTextField tfInstrução;
     private javax.swing.JTextField tfNatural;
     private javax.swing.JTextField tfNome;
-    private javax.swing.JTextField tfNumFichaAtual;
-    private javax.swing.JTextField tfProfissão;
+    private javax.swing.JTextField tfProfissao;
     private javax.swing.JTextField tfReligiao;
     // End of variables declaration//GEN-END:variables
 }

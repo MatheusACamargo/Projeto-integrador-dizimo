@@ -5,13 +5,23 @@
  */
 package telas;
 
+import database.DBEndereco;
+import database.DBMException;
+import database.DBMLocalizador;
+import database.DBPessoa;
 import dizimo.Funcao;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Usuario
  */
 public class GridPessoas extends javax.swing.JDialog {
+    private DefaultTableModel dtm;
+    private DBMLocalizador<DBPessoa> lPessoa;
+
 
     /**
      * Creates new form GridPessoas
@@ -19,6 +29,7 @@ public class GridPessoas extends javax.swing.JDialog {
     public GridPessoas(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        dtm = (DefaultTableModel) tPessoas.getModel();
     }
 
     /**
@@ -41,6 +52,11 @@ public class GridPessoas extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Tabela de Pessoas");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jLabel1.setText("Filtro");
 
@@ -48,10 +64,7 @@ public class GridPessoas extends javax.swing.JDialog {
 
         tPessoas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Código", "Nome ", "Endereço", "Ficha Atual"
@@ -137,25 +150,74 @@ public class GridPessoas extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btIncluirActionPerformed
-        TelaPessoa tp = new TelaPessoa(this, true, Funcao.INCLUSAO);
+        TelaPessoa tp = new TelaPessoa(this, true, Funcao.INCLUSAO, 0);
         tp.setVisible(true);
+        if(tp.isOK()){
+            dtm.insertRow(tPessoas.getRowCount(), toRow(tp.getPes()));
+        }
     }//GEN-LAST:event_btIncluirActionPerformed
 
     private void btAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAlterarActionPerformed
-        TelaPessoa tp = new TelaPessoa(this, true, Funcao.ALTERACAO);
+        int row = tPessoas.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
+            return;
+        }
+        TelaPessoa tp = new TelaPessoa(this, true, Funcao.ALTERACAO, (int) tPessoas.getValueAt(row, 0));
         tp.setVisible(true);
+        if(tp.isOK()){
+            dtm.removeRow(row);
+            dtm.insertRow(row, toRow(tp.getPes()));
+        }
     }//GEN-LAST:event_btAlterarActionPerformed
 
     private void btConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btConsultarActionPerformed
-        TelaPessoa tp = new TelaPessoa(this, true, Funcao.CONSULTA);
+        int row = tPessoas.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
+            return;
+        }
+        TelaPessoa tp = new TelaPessoa(this, true, Funcao.CONSULTA, (int) tPessoas.getValueAt(row, 0));
         tp.setVisible(true);
     }//GEN-LAST:event_btConsultarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-        TelaPessoa tp = new TelaPessoa(this, true, Funcao.EXCLUSAO);
+        int row = tPessoas.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
+            return;
+        }
+        TelaPessoa tp = new TelaPessoa(this, true, Funcao.EXCLUSAO, (int) tPessoas.getValueAt(row, 0));
         tp.setVisible(true);
+        if(tp.isOK()){
+            dtm.removeRow(row);
+        }
     }//GEN-LAST:event_btExcluirActionPerformed
 
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        List<DBPessoa> listPes;
+        try {
+            //para demais funções busca o registro no banco
+            lPessoa = new DBMLocalizador<>(DBPessoa.class);
+            listPes = lPessoa.procuraRegistros("");
+            if(listPes != null){
+                for(DBPessoa end : listPes){
+                    dtm.insertRow(tPessoas.getRowCount(), toRow(end));
+                }
+            }
+        } catch (DBMException e) {
+        }
+    }//GEN-LAST:event_formWindowOpened
+
+    private Object[] toRow(DBPessoa pes){
+        Object[] dados = new Object[tPessoas.getColumnCount()];
+        dados[0] = pes.getCodigo();
+        dados[1] = pes.getNome();
+        dados[2] = pes.getEndereco().getLogradouro();
+        dados[3] = pes.getNumFichaAtual();
+        return dados;
+    }
+    
     /**
      * @param args the command line arguments
      */
