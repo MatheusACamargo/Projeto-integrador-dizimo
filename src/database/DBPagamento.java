@@ -6,6 +6,7 @@
 package database;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  *
@@ -16,13 +17,13 @@ public class DBPagamento {
     @DBMPK
     private Integer codigoFicha;
     @DBMPK
-    private Integer intDataReferencia;
+    private String strDataReferencia;
     @DBMExcluido
-    private Timestamp dataReferencia;
+    private Date dataReferencia;
     private float valor;
-    private Integer intDataPagamento;
+    private String strDataPagamento;
     @DBMExcluido
-    private Timestamp dataPagamento;
+    private Date dataPagamento;
 
     public DBPagamento() {
     }
@@ -35,20 +36,22 @@ public class DBPagamento {
         this.codigoFicha = codigoFicha;
     }
 
-    public Integer getIntDataReferencia() {
-        return intDataReferencia;
+    public String getStrDataReferencia() {
+        return strDataReferencia;
     }
 
-    public void setIntDataReferencia(Integer intDataReferencia) {
-        this.intDataReferencia = intDataReferencia;
+    public void setStrDataReferencia(String strDataReferencia) {
+        this.strDataReferencia = strDataReferencia;
+        dataReferencia = Conexao.getInstance().stringToDate(strDataReferencia);
     }
 
-    public Timestamp getDataReferencia() {
+    public Date getDataReferencia() {
         return dataReferencia;
     }
 
-    public void setDataReferencia(Timestamp dataReferencia) {
+    public void setDataReferencia(Date dataReferencia) {
         this.dataReferencia = dataReferencia;
+        strDataReferencia = Conexao.getInstance().dateToString(dataReferencia);
     }
 
     public float getValor() {
@@ -59,20 +62,22 @@ public class DBPagamento {
         this.valor = valor;
     }
 
-    public Integer getIntDataPagamento() {
-        return intDataPagamento;
+    public String getStrDataPagamento() {
+        return strDataPagamento;
     }
 
-    public void setIntDataPagamento(Integer intDataPagamento) {
-        this.intDataPagamento = intDataPagamento;
+    public void setStrDataPagamento(String strDataPagamento) {
+        this.strDataPagamento = strDataPagamento;
+        dataPagamento = Conexao.getInstance().stringToDate(strDataPagamento);
     }
 
-    public Timestamp getDataPagamento() {
+    public Date getDataPagamento() {
         return dataPagamento;
     }
 
-    public void setDataPagamento(Timestamp dataPagamento) {
+    public void setDataPagamento(Date dataPagamento) {
         this.dataPagamento = dataPagamento;
+        strDataPagamento = Conexao.getInstance().dateToString(dataPagamento); 
     }
     
 }
