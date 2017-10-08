@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.text.NumberFormatter;
 
@@ -130,15 +131,11 @@ public class TelaPessoa extends javax.swing.JDialog {
 
         jLabel8.setText("Religião");
 
-        try {
-            ftTelefone.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("(##)#####-####")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
+        ftTelefone.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
 
         jLabel9.setText("Instrução");
 
-        ftNascimento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/mm/yyyy"))));
+        ftNascimento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/MM/yyyy"))));
 
         jLabel10.setText("Profissão");
 
@@ -160,9 +157,15 @@ public class TelaPessoa extends javax.swing.JDialog {
 
         coSalario.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mínimo", "Mais", "Menos" }));
 
+        ftNumCasa.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+
         ftDataSocio.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
 
         jLabel15.setText("Socio desde");
+
+        ftNumFichaAtual.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+
+        ftCodigo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -317,8 +320,8 @@ public class TelaPessoa extends javax.swing.JDialog {
         dispose();
         OK = true;
         //Carrega os campos do objeto com o conteúdo da tela
-        pessoa.setCodigo((Integer) ftCodigo.getValue());
-        pessoa.setNumFichaAtual((Integer) ftNumFichaAtual.getValue());
+        pessoa.setCodigo(toInteger(ftCodigo));
+        pessoa.setNumFichaAtual(toInteger(ftNumFichaAtual));
         pessoa.setNome(tfNome.getText());
         try {
             enderecos = lEndereco.procuraRegistros("logradouro LIKE ?", coEndereco.getSelectedItem());
@@ -326,8 +329,8 @@ public class TelaPessoa extends javax.swing.JDialog {
         } catch (DBMException ex) {
         }
         pessoa.setEndereco(endereco);
-        pessoa.setNumCasa((Integer) ftNumCasa.getValue());
-        pessoa.setTelefone((Integer) ftTelefone.getValue());
+        pessoa.setNumCasa(toInteger(ftNumCasa));
+        pessoa.setTelefone(toInteger(ftTelefone));
         pessoa.setEstadoCivil((String) coEstadoCivil.getSelectedItem());
         pessoa.setCasamentoReligioso(cbCasamentoReligioso.isSelected());
         pessoa.setCasamentoCivil(cbCasamentoCivil.isSelected());
@@ -387,8 +390,8 @@ public class TelaPessoa extends javax.swing.JDialog {
             habilitaComponentes(this, false);
         }
         //carrega os campos da tela com o conteúdo do objeto
-        ftCodigo.setValue(pessoa.getCodigo());
-        ftNumFichaAtual.setValue(pessoa.getNumFichaAtual());
+        ftCodigo.setValue(pessoa.getCodigo().longValue());
+        ftNumFichaAtual.setValue(pessoa.getNumFichaAtual().longValue());
         tfNome.setText(pessoa.getNome());
         for (DBEndereco end : enderecos) {
             coEndereco.addItem(end.getLogradouro());
@@ -398,8 +401,8 @@ public class TelaPessoa extends javax.swing.JDialog {
         }else{
             coEndereco.setSelectedItem(0);
         }
-        ftNumCasa.setText(pessoa.getNumCasa().toString());
-        ftTelefone.setValue(pessoa.getTelefone());
+        ftNumCasa.setValue(pessoa.getNumCasa().longValue());
+        ftTelefone.setValue(pessoa.getTelefone().longValue());
         coEstadoCivil.setSelectedItem(pessoa.getEstadoCivil());
         cbCasamentoCivil.setSelected(pessoa.isCasamentoCivil());
         cbCasamentoReligioso.setSelected(pessoa.isCasamentoReligioso());
@@ -416,7 +419,7 @@ public class TelaPessoa extends javax.swing.JDialog {
         tfProfissao.setText(pessoa.getProfissao());
     }//GEN-LAST:event_formWindowOpened
 
-    public void habilitaComponentes(Container container, boolean enable) {
+    private void habilitaComponentes(Container container, boolean enable) {
         Component[] components = container.getComponents();
         for (Component component : components) {
             component.setEnabled(enable);
@@ -425,6 +428,11 @@ public class TelaPessoa extends javax.swing.JDialog {
             }
         }
     }
+    
+    private Integer toInteger(JFormattedTextField field){
+        return ((Long) field.getValue()).intValue();
+    }
+         
     
     /**
      * @param args the command line arguments

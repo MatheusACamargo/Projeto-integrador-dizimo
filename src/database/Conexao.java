@@ -65,11 +65,13 @@ public class Conexao {
     }
     
     public String dateToString(Date data){
+        if(data == null) return "";
         return sdf.format(data);
     }
     
     public Date stringToDate(String data){
         try {
+            if(data == null || data.equals("")) return null;
             return sdf.parse(data);
         } catch (ParseException ex) {
             Logger.getLogger(Conexao.class.getName()).log(Level.SEVERE, null, ex);

@@ -66,8 +66,8 @@
                           <Component id="tfLogradouro" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="ftCodigo" min="-2" pref="98" max="-2" attributes="0"/>
                                   <Component id="ftCep" min="-2" pref="98" max="-2" attributes="0"/>
-                                  <Component id="tfCodigo" min="-2" pref="98" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="0" pref="168" max="32767" attributes="0"/>
                           </Group>
@@ -83,8 +83,8 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="tfCodigo" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="ftCodigo" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -134,15 +134,6 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btOKActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JFormattedTextField" name="ftCep">
-      <Properties>
-        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor" preCode="try {" postCode="} catch (java.text.ParseException ex) {&#xa;ex.printStackTrace();&#xa;}">
-          <Format format="##.###-###" subtype="-1" type="5"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="tfCodigo">
-    </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" value="C&#xf3;digo"/>
@@ -173,6 +164,20 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="tfVila">
+    </Component>
+    <Component class="javax.swing.JFormattedTextField" name="ftCodigo">
+      <Properties>
+        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
+          <Format subtype="1" type="0"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JFormattedTextField" name="ftCep">
+      <Properties>
+        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
+          <Format subtype="1" type="0"/>
+        </Property>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

@@ -244,7 +244,7 @@ public class DBPessoa {
 
     public void setCrisma(boolean crisma) {
         this.crisma = crisma;
-        intCrisma = crisma ? 1 : 1;
+        intCrisma = crisma ? 1 : 0;
     }
 
     public Integer getIntCrisma() {

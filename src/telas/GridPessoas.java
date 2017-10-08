@@ -210,10 +210,13 @@ public class GridPessoas extends javax.swing.JDialog {
     }//GEN-LAST:event_formWindowOpened
 
     private Object[] toRow(DBPessoa pes){
+        DBEndereco end = pes.getEndereco();
         Object[] dados = new Object[tPessoas.getColumnCount()];
         dados[0] = pes.getCodigo();
         dados[1] = pes.getNome();
-        dados[2] = pes.getEndereco().getLogradouro();
+        if (end != null){
+            dados[2] = end.getLogradouro();
+        }
         dados[3] = pes.getNumFichaAtual();
         return dados;
     }

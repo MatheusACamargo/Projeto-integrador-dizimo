@@ -10,6 +10,7 @@ import database.DBMException;
 import database.DBMLocalizador;
 import database.DBMPersistor;
 import dizimo.Funcao;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 
 /**
@@ -48,8 +49,6 @@ public class TelaEndereco extends javax.swing.JDialog {
         jLabel6 = new javax.swing.JLabel();
         tfBairro = new javax.swing.JTextField();
         btOK = new javax.swing.JButton();
-        ftCep = new javax.swing.JFormattedTextField();
-        tfCodigo = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -58,6 +57,8 @@ public class TelaEndereco extends javax.swing.JDialog {
         tfDescComplem = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         tfVila = new javax.swing.JTextField();
+        ftCodigo = new javax.swing.JFormattedTextField();
+        ftCep = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Endereço");
@@ -77,12 +78,6 @@ public class TelaEndereco extends javax.swing.JDialog {
             }
         });
 
-        try {
-            ftCep.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##.###-###")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-
         jLabel1.setText("Código");
 
         jLabel2.setText("Logradouro");
@@ -92,6 +87,10 @@ public class TelaEndereco extends javax.swing.JDialog {
         jLabel4.setText("Desc.Complementar");
 
         jLabel5.setText("Vila");
+
+        ftCodigo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+
+        ftCep.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -126,8 +125,8 @@ public class TelaEndereco extends javax.swing.JDialog {
                             .addComponent(tfLogradouro)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(ftCep, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(tfCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(ftCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(ftCep, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 168, Short.MAX_VALUE)))))
                 .addGap(24, 24, 24))
         );
@@ -136,8 +135,8 @@ public class TelaEndereco extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tfCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabel1)
+                    .addComponent(ftCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfLogradouro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -171,8 +170,8 @@ public class TelaEndereco extends javax.swing.JDialog {
         OK = true;
         //Carrega os campos do objeto com o conteúdo da tela
         endereco.setBairro(tfBairro.getText());
-        endereco.setCep((Integer) ftCep.getValue());
-        endereco.setCodigo(Integer.parseInt(tfCodigo.getText()));
+        endereco.setCep(toInteger(ftCep));
+        endereco.setCodigo(toInteger(ftCodigo));
         endereco.setLogradouro(tfLogradouro.getText());
         endereco.setDescricaoComplementar(tfDescComplem.getText());
         endereco.setVila(tfVila.getText());
@@ -215,20 +214,24 @@ public class TelaEndereco extends javax.swing.JDialog {
             //desabilita todos os campos da tela
             tfBairro.setEnabled(false);
             ftCep.setEnabled(false);
-            tfCodigo.setEnabled(false);
+            ftCodigo.setEnabled(false);
             tfLogradouro.setEnabled(false);
             tfDescComplem.setEnabled(false);
             tfVila.setEnabled(false);
         }
         //carrega os campos da tela com o conteúdo do objeto
         tfBairro.setText(endereco.getBairro());
-        ftCep.setValue(endereco.getCep());
-        tfCodigo.setText(endereco.getCodigo().toString());
+        ftCep.setValue(endereco.getCep().longValue());
+        ftCodigo.setValue(endereco.getCodigo().longValue());
         tfLogradouro.setText(endereco.getLogradouro());
         tfDescComplem.setText(endereco.getDescricaoComplementar());
         tfVila.setText(endereco.getVila());
     }//GEN-LAST:event_formWindowOpened
 
+    private Integer toInteger(JFormattedTextField field){
+        return ((Long) field.getValue()).intValue();
+    }
+            
     public boolean isOK() {
         return OK;
     }
@@ -282,6 +285,7 @@ public class TelaEndereco extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btOK;
     private javax.swing.JFormattedTextField ftCep;
+    private javax.swing.JFormattedTextField ftCodigo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -289,7 +293,6 @@ public class TelaEndereco extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JTextField tfBairro;
-    private javax.swing.JTextField tfCodigo;
     private javax.swing.JTextField tfDescComplem;
     private javax.swing.JTextField tfLogradouro;
     private javax.swing.JTextField tfVila;
