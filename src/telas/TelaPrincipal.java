@@ -5,6 +5,7 @@
  */
 package telas;
 
+import dizimo.Funcao;
 import javax.swing.JFrame;
 
 /**
@@ -86,7 +87,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pbPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbPessoasActionPerformed
-        GridPessoas gp = new GridPessoas(this, true);
+        GridPessoas gp = new GridPessoas(this, true, Funcao.ALTERACAO);
         gp.setVisible(true);    }//GEN-LAST:event_pbPessoasActionPerformed
 
     private void pbFichasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbFichasActionPerformed

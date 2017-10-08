@@ -21,13 +21,18 @@ import javax.swing.table.DefaultTableModel;
 public class GridPessoas extends javax.swing.JDialog {
     private DefaultTableModel dtm;
     private DBMLocalizador<DBPessoa> lPessoa;
+    private Funcao fun;
+    private List<DBPessoa> listPes;
+    private DBPessoa pessoa;
+    private boolean selected;
 
 
     /**
      * Creates new form GridPessoas
      */
-    public GridPessoas(java.awt.Frame parent, boolean modal) {
+    public GridPessoas(java.awt.Frame parent, boolean modal, Funcao fun) {
         super(parent, modal);
+        this.fun = fun;
         initComponents();
         dtm = (DefaultTableModel) tPessoas.getModel();
     }
@@ -49,6 +54,7 @@ public class GridPessoas extends javax.swing.JDialog {
         btAlterar = new javax.swing.JButton();
         btConsultar = new javax.swing.JButton();
         btExcluir = new javax.swing.JButton();
+        btSelecionar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Tabela de Pessoas");
@@ -108,6 +114,13 @@ public class GridPessoas extends javax.swing.JDialog {
             }
         });
 
+        btSelecionar.setText("Selecionar");
+        btSelecionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btSelecionarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -127,7 +140,8 @@ public class GridPessoas extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tfFiltro, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)))
+                        .addComponent(tfFiltro, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
+                    .addComponent(btSelecionar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -142,8 +156,9 @@ public class GridPessoas extends javax.swing.JDialog {
                     .addComponent(jLabel1)
                     .addComponent(tfFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btSelecionar))
         );
 
         pack();
@@ -195,19 +210,38 @@ public class GridPessoas extends javax.swing.JDialog {
     }//GEN-LAST:event_btExcluirActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        List<DBPessoa> listPes;
         try {
             //para demais funções busca o registro no banco
             lPessoa = new DBMLocalizador<>(DBPessoa.class);
             listPes = lPessoa.procuraRegistros("");
             if(listPes != null){
-                for(DBPessoa end : listPes){
-                    dtm.insertRow(tPessoas.getRowCount(), toRow(end));
+                for(DBPessoa pes : listPes){
+                    dtm.insertRow(tPessoas.getRowCount(), toRow(pes));
                 }
             }
         } catch (DBMException e) {
         }
+        if(fun != Funcao.PESQUISA){
+            btSelecionar.setVisible(false);
+        }else{
+            selected = false;
+        }
     }//GEN-LAST:event_formWindowOpened
+
+    private void btSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSelecionarActionPerformed
+        int row = tPessoas.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(this, "Selecione um registro na tabela acima!");
+            return;
+        }
+        int codigo = (int) tPessoas.getValueAt(row, 0);
+        for(DBPessoa pes : listPes){
+            if(pes.getCodigo() == codigo){
+                pessoa = pes;
+                break;
+            }
+        }
+    }//GEN-LAST:event_btSelecionarActionPerformed
 
     private Object[] toRow(DBPessoa pes){
         DBEndereco end = pes.getEndereco();
@@ -220,54 +254,21 @@ public class GridPessoas extends javax.swing.JDialog {
         dados[3] = pes.getNumFichaAtual();
         return dados;
     }
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GridPessoas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GridPessoas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GridPessoas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GridPessoas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                GridPessoas dialog = new GridPessoas(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
+    public DBPessoa getPessoa() {
+        return pessoa;
     }
 
+    public boolean isSelected() {
+        return selected;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAlterar;
     private javax.swing.JButton btConsultar;
     private javax.swing.JButton btExcluir;
     private javax.swing.JButton btIncluir;
+    private javax.swing.JButton btSelecionar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tPessoas;
