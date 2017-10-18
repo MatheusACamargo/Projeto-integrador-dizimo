@@ -65,12 +65,12 @@ public class DBMLocalizador<T extends Object>{
 
     }
 	
-    public List<T> procuraRegistros(String clausulaWhere) throws DBMException{
+    public ArrayList<T> procuraRegistros(String clausulaWhere) throws DBMException{
         return procuraRegistros(clausulaWhere, (Object[]) null);
     }
 	
     @SuppressWarnings("unchecked")//sempre vai retornar o tipo T
-    public List<T> procuraRegistros(String clausulaWhere, Object... prms) throws DBMException{
+    public ArrayList<T> procuraRegistros(String clausulaWhere, Object... prms) throws DBMException{
         ArrayList<T> result = new ArrayList<>();
         preparaSelect();
         //se tem filtros de registro
@@ -174,6 +174,17 @@ public class DBMLocalizador<T extends Object>{
                 }
             }
         }
+        //Tenta preencher os objetos das classes vinculadas, se existir esse método
+        for (Method met : metodos) {
+            if(met.getName().equalsIgnoreCase("preencheObjeto")){
+                try {
+                    met.invoke(novo);
+                } catch (Exception e) {
+                    throw new DBMException(e);
+                }
+            }
+        }
+        
     }
 
     private void pushWhere() {

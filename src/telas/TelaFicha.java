@@ -14,7 +14,6 @@ import database.DBMPersistor;
 import database.DBPessoa;
 import dizimo.Funcao;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -39,7 +38,7 @@ public class TelaFicha extends javax.swing.JDialog {
     private DBEndereco endereco;
     private DBMLocalizador<DBEndereco> lEndereco;
 
-    private List<DBFichaPessoa> aFichaPessoa;
+    private ArrayList<DBFichaPessoa> aFichaPessoa;
     private DBMLocalizador<DBFichaPessoa> lFichaPessoa;
 
     /**
@@ -222,6 +221,7 @@ public class TelaFicha extends javax.swing.JDialog {
             //Se é inclusão apenas cria um novo objeto
             if(fun == Funcao.INCLUSAO){
                 ficha = new DBFicha();
+                aFichaPessoa = new ArrayList<>();
             }else{
                 //para demais funções busca o registro no banco
                 lFicha = new DBMLocalizador<>(DBFicha.class);
@@ -233,8 +233,6 @@ public class TelaFicha extends javax.swing.JDialog {
                 lFichaPessoa = new DBMLocalizador<>(DBFichaPessoa.class);
                 aFichaPessoa = lFichaPessoa.procuraRegistros("intFicha = " + Integer.toString(codigo));
 
-
-                ficha.preencheObjeto();
                 responsavel = ficha.getResponsavel();
             }
             pFicha = new DBMPersistor(ficha);

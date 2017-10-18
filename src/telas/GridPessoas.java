@@ -10,7 +10,7 @@ import database.DBMException;
 import database.DBMLocalizador;
 import database.DBPessoa;
 import dizimo.Funcao;
-import java.util.List;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,7 +22,7 @@ public class GridPessoas extends javax.swing.JDialog {
     private DefaultTableModel dtm;
     private DBMLocalizador<DBPessoa> lPessoa;
     private Funcao fun;
-    private List<DBPessoa> listPes;
+    private ArrayList<DBPessoa> listPes;
     private DBPessoa pessoa;
     private boolean selected;
 

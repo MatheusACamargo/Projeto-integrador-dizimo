@@ -187,9 +187,7 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
     private void atualizaGrid(){
         tPessoasFicha.removeAll();
         for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
-            if(fichaPessoa!=null){
-                dtm.insertRow(tPessoasFicha.getRowCount(), toRow(fichaPessoa));
-            }
+            dtm.insertRow(tPessoasFicha.getRowCount(), toRow(fichaPessoa));
         }
     }
 

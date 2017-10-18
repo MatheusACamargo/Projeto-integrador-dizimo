@@ -5,21 +5,14 @@
  */
 package telas;
 
-import database.DBFicha;
 import database.DBFichaPessoa;
 import database.DBMException;
 import database.DBMLocalizador;
 import database.DBPessoa;
 import dizimo.Funcao;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.sql.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.text.NumberFormat;
-import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.text.NumberFormatter;
 
@@ -167,7 +160,9 @@ public class TelaVinculacao extends javax.swing.JDialog {
         gPessoas.setVisible(true);
         if(gPessoas.getPessoa()!=null){
             pessoa = gPessoas.getPessoa();
-            exibePessoa();
+            tfPessoa.setText(pessoa.getCodigo().toString());
+            tfNomePessoa.setText(pessoa.getNome());
+            fichaPessoa.setPessoa(pessoa);
         }
     }//GEN-LAST:event_pbBuscarActionPerformed
 
@@ -202,11 +197,6 @@ public class TelaVinculacao extends javax.swing.JDialog {
         fichaPessoa.setDataFinal((java.util.Date)ftDataFinal.getValue());
         dispose();
     }//GEN-LAST:event_pbOkActionPerformed
-
-    private void exibePessoa(){
-        tfPessoa.setText(pessoa.getCodigo().toString());
-        tfNomePessoa.setText(pessoa.getNome());
-    }
     
     public DBFichaPessoa getFichaPessoa(){
         return fichaPessoa;

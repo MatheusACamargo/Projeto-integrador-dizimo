@@ -227,7 +227,6 @@ public class GridFichas extends javax.swing.JDialog {
             listFicha = loc.procuraRegistros("");
             if(listFicha != null){
                 for(DBFicha ficha : listFicha){
-                    ficha.preencheObjeto();
                     dtm.insertRow(tFichas.getRowCount(), toRow(ficha));
                 }
             }

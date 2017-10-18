@@ -9,7 +9,7 @@ import database.DBEndereco;
 import database.DBMException;
 import database.DBMLocalizador;
 import dizimo.Funcao;
-import java.util.List;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -183,7 +183,7 @@ public class GridEnderecos extends javax.swing.JDialog {
     }//GEN-LAST:event_btExcluirActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        List<DBEndereco> listEnd;
+        ArrayList<DBEndereco> listEnd;
         try {
             //para demais funções busca o registro no banco
             lEndereco = new DBMLocalizador<>(DBEndereco.class);
