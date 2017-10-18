@@ -31,6 +31,8 @@ public class TelaFicha extends javax.swing.JDialog {
     private DBFicha ficha;
     private DBMLocalizador<DBFicha> lFicha;
     private DBMPersistor pFicha;
+    private DBMPersistor pFichaPessoa;
+    
 
     private DBPessoa responsavel;
     private DBMLocalizador<DBPessoa> lPessoa;
@@ -40,6 +42,7 @@ public class TelaFicha extends javax.swing.JDialog {
 
     private ArrayList<DBFichaPessoa> aFichaPessoa;
     private DBMLocalizador<DBFichaPessoa> lFichaPessoa;
+    private List<DBFichaPessoa> auxiliarFichaPessoa;
 
     /**
      * Creates new form TelaFichaNova
@@ -286,9 +289,12 @@ public class TelaFicha extends javax.swing.JDialog {
             switch(fun){
                 case INCLUSAO:
                     pFicha.insere();
+                    insereFichaPessoa();
                     break;
                 case ALTERACAO:
                     pFicha.altera();
+                    excluiFichaPessoa();
+                    insereFichaPessoa();
                     break;
                 case EXCLUSAO:
                     pFicha.exclui();
@@ -297,7 +303,51 @@ public class TelaFicha extends javax.swing.JDialog {
         } catch (DBMException e) {
         }
     }//GEN-LAST:event_pbOkActionPerformed
-
+    
+    private void insereFichaPessoa(){
+        geraIDFichaPessoa();
+        for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
+            try {
+                pFichaPessoa = new DBMPersistor(fichaPessoa);
+                pFichaPessoa.insere();
+            } catch (DBMException ex) {
+                Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }        
+    }
+    
+    private void excluiFichaPessoa(){
+        try {
+            auxiliarFichaPessoa = lFichaPessoa.procuraRegistros("");
+        } catch (DBMException ex) {
+            Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
+            try {
+                pFichaPessoa = new DBMPersistor(fichaPessoa);
+                pFichaPessoa.exclui();
+            } catch (DBMException ex) {
+                Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }          
+    }
+    
+    private void geraIDFichaPessoa(){
+        int codigoFichaPessoa = 0;
+        try {
+            auxiliarFichaPessoa = lFichaPessoa.procuraRegistros("");
+        } catch (DBMException ex) {
+            Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        codigoFichaPessoa = auxiliarFichaPessoa.get(auxiliarFichaPessoa.size()).getCodigo();
+        for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
+            if(fichaPessoa.getCodigo() == 0){
+                codigoFichaPessoa++;
+                fichaPessoa.setCodigo(codigoFichaPessoa);
+            }
+        }        
+    }
+    
     private void exibeResponsavel(DBPessoa responsavel){
         tfResponsavel.setText(responsavel.getNome());
         try {
