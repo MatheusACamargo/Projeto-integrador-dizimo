@@ -1,6 +1,8 @@
 package database;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -45,6 +47,11 @@ public class DBPessoa {
     private Integer intPraticante = 0;
     private String instrucao = "";
     private String profissao = "";
+
+    //Dados para preenchimento do objeto
+    @DBMExcluido
+    private DBMLocalizador<DBEndereco> lEndereco;
+
     
     public DBPessoa(){
         
@@ -290,5 +297,15 @@ public class DBPessoa {
         this.profissao = profissao;
     }
 
-        
+    public void preencheObjeto(){
+        try {
+            lEndereco = new DBMLocalizador<>(DBEndereco.class);
+            endereco = lEndereco.procuraRegistro(intEndereco);
+            if(endereco == null){
+                endereco = new DBEndereco();
+            }
+        } catch (DBMException ex) {
+            Logger.getLogger(DBPessoa.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }        
 }

@@ -9,6 +9,7 @@ import database.DBEndereco;
 import database.DBFicha;
 import database.DBMException;
 import database.DBMLocalizador;
+import database.DBPessoa;
 import dizimo.Funcao;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,7 +24,13 @@ import javax.swing.table.DefaultTableModel;
 public class GridFichas extends javax.swing.JDialog {
     private DefaultTableModel dtm;
     private DBMLocalizador<DBFicha> loc;
-    
+    private DBPessoa pessoa;
+    private DBMLocalizador<DBPessoa> lPessoa;
+    private DBEndereco endereco;
+    private DBMLocalizador<DBEndereco> lEndereco;
+
+
+
     /**
      * Creates new form GridFichas
      */
@@ -162,23 +169,49 @@ public class GridFichas extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pbConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbConsultarActionPerformed
-        TelaFicha tf = new TelaFicha(this, true, Funcao.CONSULTA, 0);
+        int row = tFichas.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
+            return;
+        }
+        TelaFicha tf = new TelaFicha(this, true, Funcao.CONSULTA, (int) tFichas.getValueAt(row, 0));
         tf.setVisible(true);
     }//GEN-LAST:event_pbConsultarActionPerformed
 
     private void pbExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbExcluirActionPerformed
-        TelaFicha tf = new TelaFicha(this, true, Funcao.EXCLUSAO, 0);
+        int row = tFichas.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
+            return;
+        }
+        TelaFicha tf = new TelaFicha(this, true, Funcao.EXCLUSAO, (int) tFichas.getValueAt(row, 0));
         tf.setVisible(true);
+        if(tf.isOK()){
+            dtm.removeRow(row);
+        }
     }//GEN-LAST:event_pbExcluirActionPerformed
 
     private void pbIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbIncluirActionPerformed
         TelaFicha tf = new TelaFicha(this, true, Funcao.INCLUSAO, 0);
         tf.setVisible(true);
+        if(tf.isOK()){
+            dtm.insertRow(tFichas.getRowCount(), toRow(tf.getFicha()));
+        }
     }//GEN-LAST:event_pbIncluirActionPerformed
 
     private void pbAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbAlterarActionPerformed
-        TelaFicha tf = new TelaFicha(this, true, Funcao.ALTERACAO, 0);
+        int row = tFichas.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
+            return;
+        }
+        System.out.println((int) tFichas.getValueAt(tFichas.getSelectedRow(), 0) + "/n");
+        TelaFicha tf = new TelaFicha(this, true, Funcao.ALTERACAO, (int) tFichas.getValueAt(tFichas.getSelectedRow(), 0));
         tf.setVisible(true);
+        if(tf.isOK()){
+            dtm.removeRow(row);
+            dtm.insertRow(row, toRow(tf.getFicha()));
+        }
     }//GEN-LAST:event_pbAlterarActionPerformed
 
     private void tfFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfFiltroActionPerformed
@@ -188,14 +221,17 @@ public class GridFichas extends javax.swing.JDialog {
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         List<DBFicha> listFicha;
         try {
-            //para demais funções busca o registro no banco
+            lPessoa = new DBMLocalizador<>(DBPessoa.class);
+            lEndereco = new DBMLocalizador<>(DBEndereco.class);
             loc = new DBMLocalizador<>(DBFicha.class);
             listFicha = loc.procuraRegistros("");
             if(listFicha != null){
                 for(DBFicha ficha : listFicha){
+                    ficha.preencheObjeto();
                     dtm.insertRow(tFichas.getRowCount(), toRow(ficha));
                 }
             }
+
         } catch (DBMException e) {
         }
     }//GEN-LAST:event_formWindowOpened
@@ -203,54 +239,14 @@ public class GridFichas extends javax.swing.JDialog {
     private Object[] toRow(DBFicha ficha){
         Object[] dados = new Object[tFichas.getColumnCount()];
         dados[0] = ficha.getCodigo();
+        dados[1] = ficha.getResponsavel().getNome();
+        dados[2] = ficha.getResponsavel().getEndereco().getLogradouro();
         //Responsável
         //dados[1] = ficha.getLogradouro();
-        //Endereço 
+        //Endereço
         //dados[2] = ficha.getDescricaoComplementar();
         dados[3] = ficha.getObservacoes();
         return dados;
-    }
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GridFichas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GridFichas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GridFichas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GridFichas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                GridFichas dialog = new GridFichas(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-     });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -5,17 +5,48 @@
  */
 package telas;
 
+import database.DBFicha;
+import database.DBFichaPessoa;
+import database.DBMException;
+import database.DBMLocalizador;
+import database.DBPessoa;
+import dizimo.Funcao;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.sql.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.text.NumberFormat;
+import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
+import javax.swing.text.NumberFormatter;
+
 /**
  *
  * @author 0132945
  */
 public class TelaVinculacao extends javax.swing.JDialog {
-
+    private Funcao fun;
+    private DBFichaPessoa fichaPessoa;
+    private DBMLocalizador<DBPessoa> lPessoa;
+    private DBPessoa pessoa;
+    private boolean OK;
+    
     /**
      * Creates new form TelaVinculacao
      */
-    public TelaVinculacao(java.awt.Dialog parent, boolean modal) {
+    public TelaVinculacao(java.awt.Dialog parent, boolean modal, Funcao fun, DBFichaPessoa fichaPessoa) {
         super(parent, modal);
+        this.fun = fun;
+        this.fichaPessoa = fichaPessoa;
+        OK = false;
+        try {     
+            lPessoa = new DBMLocalizador<>(DBPessoa.class);
+        } catch (DBMException ex) {
+            Logger.getLogger(TelaVinculacao.class.getName()).log(Level.SEVERE, null, ex);
+        }
         initComponents();
     }
 
@@ -32,20 +63,53 @@ public class TelaVinculacao extends javax.swing.JDialog {
         lbDataFinal = new javax.swing.JLabel();
         ftDataFinal = new javax.swing.JFormattedTextField();
         pbOk = new javax.swing.JButton();
-        tfPessoa = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         ftDataInicial = new javax.swing.JFormattedTextField();
+        pbBuscar = new javax.swing.JButton();
+        tfNomePessoa = new javax.swing.JTextField();
+        tfPessoa = new javax.swing.JFormattedTextField(new NumberFormatter(NumberFormat.getInstance()));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Vinculação de pessoa na ficha[");
+        setTitle("Vinculação de pessoa na ficha");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         lbDataInicial.setText("Data Inicial");
 
         lbDataFinal.setText("Data Final");
 
+        ftDataFinal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+
         pbOk.setText("OK");
+        pbOk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pbOkActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Pessoa");
+
+        ftDataInicial.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+
+        pbBuscar.setText("Buscar");
+        pbBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pbBuscarActionPerformed(evt);
+            }
+        });
+
+        tfNomePessoa.setEditable(false);
+        tfNomePessoa.setFocusable(false);
+
+        tfPessoa.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
+        tfPessoa.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tfPessoaFocusLost(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -54,26 +118,34 @@ public class TelaVinculacao extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(pbOk)
+                    .addComponent(jLabel1)
+                    .addComponent(lbDataInicial)
+                    .addComponent(lbDataFinal))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(tfPessoa)
+                    .addComponent(ftDataInicial, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ftDataFinal, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1)
-                            .addComponent(lbDataInicial)
-                            .addComponent(lbDataFinal))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(ftDataFinal)
-                            .addComponent(ftDataInicial, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tfPessoa, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(tfNomePessoa)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pbBuscar))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(226, 226, 226)
+                        .addComponent(pbOk)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tfPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabel1)
+                    .addComponent(pbBuscar)
+                    .addComponent(tfNomePessoa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ftDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -90,55 +162,69 @@ public class TelaVinculacao extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaVinculacao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaVinculacao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaVinculacao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaVinculacao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    private void pbBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbBuscarActionPerformed
+        GridPessoas gPessoas = new GridPessoas(this, true, Funcao.PESQUISA);
+        gPessoas.setVisible(true);
+        if(gPessoas.getPessoa()!=null){
+            pessoa = gPessoas.getPessoa();
+            exibePessoa();
         }
-        //</editor-fold>
+    }//GEN-LAST:event_pbBuscarActionPerformed
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                TelaVinculacao dialog = new TelaVinculacao(new javax.swing.JDialog(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        if(fun==Funcao.INCLUSAO){
+            fichaPessoa = new DBFichaPessoa();
+        }
+    }//GEN-LAST:event_formWindowOpened
+
+    private void tfPessoaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfPessoaFocusLost
+        if(tfPessoa.getText().isEmpty()){
+            return;
+        }
+        try {
+            int codigoPessoa = Integer.parseInt(tfPessoa.getText());
+            pessoa = lPessoa.procuraRegistro(codigoPessoa);
+            if(pessoa == null){
+                JOptionPane.showMessageDialog(this, "Pessoa de código " + codigoPessoa + " não foi lida corretamente do banco!");
+                tfPessoa.requestFocus();
+            }else{
+                tfNomePessoa.setText(pessoa.getNome());
+                fichaPessoa.setPessoa(pessoa);
             }
-        });
-    }
+        } catch (DBMException ex) {
+            Logger.getLogger(TelaVinculacao.class.getName()).log(Level.SEVERE, null, ex);
+        }                
+    }//GEN-LAST:event_tfPessoaFocusLost
 
+    private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
+        OK = true;
+        fichaPessoa.setDataInicial((java.util.Date)ftDataInicial.getValue());
+        fichaPessoa.setDataFinal((java.util.Date)ftDataFinal.getValue());
+        dispose();
+    }//GEN-LAST:event_pbOkActionPerformed
+
+    private void exibePessoa(){
+        tfPessoa.setText(pessoa.getCodigo().toString());
+        tfNomePessoa.setText(pessoa.getNome());
+    }
+    
+    public DBFichaPessoa getFichaPessoa(){
+        return fichaPessoa;
+    }
+    
+    public boolean isOK(){
+        return OK;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField ftDataFinal;
     private javax.swing.JFormattedTextField ftDataInicial;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lbDataFinal;
     private javax.swing.JLabel lbDataInicial;
+    private javax.swing.JButton pbBuscar;
     private javax.swing.JButton pbOk;
-    private javax.swing.JTextField tfPessoa;
+    private javax.swing.JTextField tfNomePessoa;
+    private javax.swing.JFormattedTextField tfPessoa;
     // End of variables declaration//GEN-END:variables
 }

@@ -75,7 +75,7 @@ public class DBFichaPessoa {
         return strDataInicial;
     }
 
-    public void setstrDataInicial(String intDataInicial) {
+    public void setstrDataInicial(String strDataInicial) {
         this.strDataInicial = strDataInicial;
         dataInicial = Conexao.getInstance().stringToDate(strDataInicial);
     }
@@ -93,7 +93,7 @@ public class DBFichaPessoa {
         return strDataFinal;
     }
 
-    public void setStrDataFinal(String intDataFinal) {
+    public void setStrDataFinal(String strDataFinal) {
         this.strDataFinal = strDataFinal;
         dataFinal = Conexao.getInstance().stringToDate(strDataFinal);
     }

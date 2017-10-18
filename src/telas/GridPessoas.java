@@ -36,6 +36,12 @@ public class GridPessoas extends javax.swing.JDialog {
         initComponents();
         dtm = (DefaultTableModel) tPessoas.getModel();
     }
+    public GridPessoas(java.awt.Dialog parent, boolean modal, Funcao fun) {
+        super(parent, modal);
+        this.fun = fun;
+        initComponents();
+        dtm = (DefaultTableModel) tPessoas.getModel();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -241,6 +247,7 @@ public class GridPessoas extends javax.swing.JDialog {
                 break;
             }
         }
+        dispose();
     }//GEN-LAST:event_btSelecionarActionPerformed
 
     private Object[] toRow(DBPessoa pes){

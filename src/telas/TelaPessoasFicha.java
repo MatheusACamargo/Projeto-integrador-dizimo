@@ -5,17 +5,34 @@
  */
 package telas;
 
+import database.DBFicha;
+import database.DBFichaPessoa;
+import database.DBPessoa;
+import dizimo.Funcao;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author 0132945
  */
 public class TelaPessoasFicha extends javax.swing.JDialog {
 
+    private List<DBFichaPessoa> aFichaPessoa;
+    private DefaultTableModel dtm;
+    private DBPessoa responsavel;
+    private boolean OK;
+
     /**
      * Creates new form TelaPessoasFicha
+     * @param parent
+     * @param modal
+     * @param aFichaPessoa
      */
-    public TelaPessoasFicha(java.awt.Dialog parent, boolean modal) {
+    public TelaPessoasFicha(java.awt.Dialog parent, boolean modal, List<DBFichaPessoa> aFichaPessoa) {
         super(parent, modal);
+        this.aFichaPessoa = aFichaPessoa;
+        OK = false;
         initComponents();
     }
 
@@ -29,7 +46,7 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tPessoasFicha = new javax.swing.JTable();
         pbIncluir = new javax.swing.JButton();
         pbExcluir = new javax.swing.JButton();
         pbOk = new javax.swing.JButton();
@@ -37,8 +54,13 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Pessoas da ficha");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tPessoasFicha.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -61,7 +83,7 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tPessoasFicha);
 
         pbIncluir.setText("Incluir");
         pbIncluir.addActionListener(new java.awt.event.ActionListener() {
@@ -130,72 +152,69 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pbIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbIncluirActionPerformed
-        TelaVinculacao tVinculacao = new TelaVinculacao(this, true);
+        TelaVinculacao tVinculacao = new TelaVinculacao(this, true, Funcao.INCLUSAO, null);
         tVinculacao.setVisible(true);
+        if(tVinculacao.isOK()){
+            aFichaPessoa.add(tVinculacao.getFichaPessoa());
+            atualizaGrid();
+        }
     }//GEN-LAST:event_pbIncluirActionPerformed
 
     private void pbExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbExcluirActionPerformed
-        TelaVinculacao tVinculacao = new TelaVinculacao(this, true);
+        TelaVinculacao tVinculacao = new TelaVinculacao(this, true, Funcao.EXCLUSAO, null);
         tVinculacao.setVisible(true);
     }//GEN-LAST:event_pbExcluirActionPerformed
 
     private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
-        // TODO add your handling code here:
+        OK = true;
+        int row = tPessoasFicha.getSelectedRow();
+        if(row != -1){
+            responsavel = aFichaPessoa.get(tPessoasFicha.getSelectedRow()).getPessoa();
+        }
+        dispose();
     }//GEN-LAST:event_pbOkActionPerformed
 
     private void pbAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbAlterarActionPerformed
-        TelaVinculacao tVinculacao = new TelaVinculacao(this, true);
+        TelaVinculacao tVinculacao = new TelaVinculacao(this, true, Funcao.ALTERACAO, null);
         tVinculacao.setVisible(true);
     }//GEN-LAST:event_pbAlterarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaPessoasFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaPessoasFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaPessoasFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaPessoasFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        dtm = (DefaultTableModel) tPessoasFicha.getModel();
+        atualizaGrid();
+    }//GEN-LAST:event_formWindowOpened
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                TelaPessoasFicha dialog = new TelaPessoasFicha(new javax.swing.JDialog(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
+    private void atualizaGrid(){
+        tPessoasFicha.removeAll();
+        for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
+            if(fichaPessoa!=null){
+                dtm.insertRow(tPessoasFicha.getRowCount(), toRow(fichaPessoa));
             }
-        });
+        }
+    }
+
+    private Object[] toRow(DBFichaPessoa fichaPessoa){
+        Object[] dados = new Object[tPessoasFicha.getColumnCount()];
+        dados[0] = fichaPessoa.getPessoa().getNome();
+        dados[1] = fichaPessoa.getStrDataInicial();
+        dados[2] = fichaPessoa.getStrDataFinal();
+        return dados;
+    }
+
+    public DBPessoa getResponsavel(){
+        return responsavel;
+    }
+
+    public boolean isOK (){
+        return OK;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JButton pbAlterar;
     private javax.swing.JButton pbExcluir;
     private javax.swing.JButton pbIncluir;
     private javax.swing.JButton pbOk;
+    private javax.swing.JTable tPessoasFicha;
     // End of variables declaration//GEN-END:variables
 }

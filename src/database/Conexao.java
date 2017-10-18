@@ -34,9 +34,7 @@ public class Conexao {
             String url = "jdbc:sqlite:" + path + "/dizimo.db";
             // cria a conexão com a base de dados
             cnx = DriverManager.getConnection(url);
-            
-            JOptionPane.showMessageDialog(new Frame(), "Conexão com SQLite estabelecida com sucesso!");
-            
+            System.out.println("LOG:Conexão com SQLite estabelecida com sucesso!");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {

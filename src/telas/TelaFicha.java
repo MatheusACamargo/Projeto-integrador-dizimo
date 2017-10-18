@@ -7,11 +7,14 @@ package telas;
 
 import database.DBEndereco;
 import database.DBFicha;
+import database.DBFichaPessoa;
 import database.DBMException;
 import database.DBMLocalizador;
 import database.DBMPersistor;
 import database.DBPessoa;
 import dizimo.Funcao;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -23,17 +26,21 @@ import javax.swing.table.DefaultTableModel;
  */
 public class TelaFicha extends javax.swing.JDialog {
     private Funcao fun;
+    private boolean OK;
     private int codigo;
-    
+
     private DBFicha ficha;
     private DBMLocalizador<DBFicha> lFicha;
     private DBMPersistor pFicha;
-    
+
     private DBPessoa responsavel;
     private DBMLocalizador<DBPessoa> lPessoa;
-    
+
     private DBEndereco endereco;
-    private DBMLocalizador<DBEndereco> lEdereco;
+    private DBMLocalizador<DBEndereco> lEndereco;
+
+    private List<DBFichaPessoa> aFichaPessoa;
+    private DBMLocalizador<DBFichaPessoa> lFichaPessoa;
 
     /**
      * Creates new form TelaFichaNova
@@ -41,7 +48,9 @@ public class TelaFicha extends javax.swing.JDialog {
     public TelaFicha(java.awt.Dialog parent, boolean modal, Funcao fun, int codigo) {
         super(parent, modal);
         this.fun = fun;
-        initComponents();     
+        this.codigo = codigo;
+        OK = false;
+        initComponents();
     }
 
     /**
@@ -200,34 +209,54 @@ public class TelaFicha extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pbPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbPessoasActionPerformed
-        TelaPessoasFicha tPessoas = new TelaPessoasFicha(this, true);
+        TelaPessoasFicha tPessoas = new TelaPessoasFicha(this, true, aFichaPessoa);
         tPessoas.setVisible(true);
+        if(tPessoas.isOK()){
+            responsavel = tPessoas.getResponsavel();
+            exibeResponsavel(responsavel);
+        }
     }//GEN-LAST:event_pbPessoasActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        if(fun == Funcao.INCLUSAO){
-            ficha = new DBFicha();
+        try {
+            //Se é inclusão apenas cria um novo objeto
+            if(fun == Funcao.INCLUSAO){
+                ficha = new DBFicha();
+            }else{
+                //para demais funções busca o registro no banco
+                lFicha = new DBMLocalizador<>(DBFicha.class);
+                ficha = lFicha.procuraRegistro(codigo);
+                if(ficha == null){
+                    JOptionPane.showMessageDialog(this, "Ficha de código " + codigo + " não foi lida corretamente do banco!");
+                    dispose();
+                }
+                lFichaPessoa = new DBMLocalizador<>(DBFichaPessoa.class);
+                aFichaPessoa = lFichaPessoa.procuraRegistros("intFicha = " + Integer.toString(codigo));
+
+
+                ficha.preencheObjeto();
+                responsavel = ficha.getResponsavel();
+            }
+            pFicha = new DBMPersistor(ficha);
+        } catch (DBMException e) {
+        }
+        //se é função que não aceita os dados
+        if(fun == Funcao.CONSULTA || fun == Funcao.EXCLUSAO){
             //Desabilita campos deixando apenas a chave informada
             tfResponsavel.setEnabled(false);
             tfEndereco.setEnabled(false);
             tbPagamentos.setEnabled(false);
             pbPessoas.setEnabled(false);
             tfObservacoes.setEnabled(false);
-            //Habilita campos da chave do registro
-            tfNumero.setEnabled(true);
-        }else{
-            try {
-                //Busca a ficha recebida por parâmetro
-                lFicha = new DBMLocalizador<>(DBFicha.class);
-                ficha = lFicha.procuraRegistro(codigo);
-                //Carrega dados da ficha lida para a manutenção
-                tfNumero.setText(ficha.getCodigo().toString());
-            } catch (DBMException ex) {
-                Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, "Não foi localizada a ficha no banco!");
-                dispose();
-            }
         }
+        if(fun == Funcao.CONSULTA || fun == Funcao.EXCLUSAO || fun == Funcao.ALTERACAO){
+            //Carrega dados da ficha lida para a manutenção
+            tfNumero.setText(ficha.getCodigo().toString());
+            tfResponsavel.setText(ficha.getResponsavel().getNome());
+            tfEndereco.setText(ficha.getResponsavel().getEndereco().getLogradouro());
+            tfObservacoes.setText(ficha.getObservacoes());
+        }
+
         //Carrega conteúdo padrão para a lista de pagamentos
         DefaultTableModel dtmPagamentos = (DefaultTableModel) tbPagamentos.getModel();
         Object[] rowDefault = {2017, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-",0};
@@ -243,65 +272,53 @@ public class TelaFicha extends javax.swing.JDialog {
         pbPessoas.setEnabled(true);
         tfObservacoes.setEnabled(true);
         //Desabilita campos da chave do registro
-        tfNumero.setEnabled(false);        
+        tfNumero.setEnabled(false);
     }//GEN-LAST:event_tfNumeroFocusLost
 
     private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
+        dispose();
+        OK = true;
         //Carrega dados da manuteção para a ficha
         ficha.setCodigo(Integer.parseInt(tfNumero.getText()));
+        ficha.setResponsavel(responsavel);
         ficha.setObservacoes(tfObservacoes.getText());
-        if(fun==Funcao.INCLUSAO){
-            try {
-                pFicha = new DBMPersistor(ficha);
-                pFicha.insere();
-                dispose();
-            } catch (DBMException ex) {
-                Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
-            }            
+        //Executa comandos no banco de dados
+        try {
+
+            switch(fun){
+                case INCLUSAO:
+                    pFicha.insere();
+                    break;
+                case ALTERACAO:
+                    pFicha.altera();
+                    break;
+                case EXCLUSAO:
+                    pFicha.exclui();
+                    break;
+            }
+        } catch (DBMException e) {
         }
     }//GEN-LAST:event_pbOkActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+    private void exibeResponsavel(DBPessoa responsavel){
+        tfResponsavel.setText(responsavel.getNome());
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaFicha.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            lEndereco = new DBMLocalizador<>(DBEndereco.class);
+            endereco = lEndereco.procuraRegistro(responsavel.getIntEndereco());
+        } catch (DBMException ex) {
+            Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
+        if(endereco!=null){
+            tfEndereco.setText(endereco.getLogradouro());
+        }
+    }
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                TelaFicha dialog = new TelaFicha(new javax.swing.JDialog(), true, Funcao.INCLUSAO, 0);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
+    public boolean isOK() {
+        return OK;
+    }
+
+    public DBFicha getFicha() {
+        return ficha;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -5,6 +5,9 @@
  */
 package database;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Lucas
@@ -17,7 +20,11 @@ public class DBFicha {
     @DBMExcluido
     private DBPessoa responsavel;
     private String observacoes;
-
+    
+    //Dados para preenchimento do objeto
+    @DBMExcluido
+    private DBMLocalizador<DBPessoa> lPessoa;
+    
     public DBFicha() {
     }
 
@@ -43,6 +50,7 @@ public class DBFicha {
 
     public void setResponsavel(DBPessoa responsavel) {
         this.responsavel = responsavel;
+        intResponsavel = responsavel.getCodigo();
     }
 
     public String getObservacoes() {
@@ -51,6 +59,19 @@ public class DBFicha {
 
     public void setObservacoes(String observacoes) {
         this.observacoes = observacoes;
+    }
+    
+    public void preencheObjeto(){
+        try {
+            lPessoa = new DBMLocalizador<>(DBPessoa.class);
+            responsavel = lPessoa.procuraRegistro(intResponsavel);
+            if(responsavel == null){
+                responsavel = new DBPessoa();
+            }
+            responsavel.preencheObjeto();
+        } catch (DBMException ex) {
+            Logger.getLogger(DBFicha.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }
