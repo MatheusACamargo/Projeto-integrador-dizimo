@@ -15,15 +15,15 @@ import java.util.Date;
 @DBMNomeTabela(nome = "Pagamento")
 public class DBPagamento {
     @DBMPK
-    private Integer codigoFicha;
+    private Integer codigoFicha = 0;
     @DBMPK
-    private String strDataReferencia;
+    private String strDataReferencia = "";
     @DBMExcluido
-    private Date dataReferencia;
-    private float valor;
-    private String strDataPagamento;
+    private Date dataReferencia = null;
+    private float valor = 0;
+    private String strDataPagamento = "";
     @DBMExcluido
-    private Date dataPagamento;
+    private Date dataPagamento = null;
 
     public DBPagamento() {
     }

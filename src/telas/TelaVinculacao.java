@@ -5,6 +5,7 @@
  */
 package telas;
 
+import database.DBFicha;
 import database.DBFichaPessoa;
 import database.DBMException;
 import database.DBMLocalizador;
@@ -13,6 +14,7 @@ import dizimo.Funcao;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.text.NumberFormat;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.text.NumberFormatter;
 
@@ -25,15 +27,17 @@ public class TelaVinculacao extends javax.swing.JDialog {
     private DBFichaPessoa fichaPessoa;
     private DBMLocalizador<DBPessoa> lPessoa;
     private DBPessoa pessoa;
+    private DBFicha ficha;
     private boolean OK;
     
     /**
      * Creates new form TelaVinculacao
      */
-    public TelaVinculacao(java.awt.Dialog parent, boolean modal, Funcao fun, DBFichaPessoa fichaPessoa) {
+    public TelaVinculacao(java.awt.Dialog parent, boolean modal, Funcao fun, DBFicha ficha, DBFichaPessoa fichaPessoa) {
         super(parent, modal);
         this.fun = fun;
         this.fichaPessoa = fichaPessoa;
+        this.ficha = ficha;
         OK = false;
         try {     
             lPessoa = new DBMLocalizador<>(DBPessoa.class);
@@ -169,6 +173,13 @@ public class TelaVinculacao extends javax.swing.JDialog {
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         if(fun==Funcao.INCLUSAO){
             fichaPessoa = new DBFichaPessoa();
+            fichaPessoa.setFicha(ficha);
+        }else{
+            pessoa = fichaPessoa.getPessoa();
+            tfPessoa.setText(pessoa.getCodigo().toString());
+            tfNomePessoa.setText(pessoa.getNome());
+            ftDataInicial.setValue(fichaPessoa.getDataInicial());
+            ftDataFinal.setValue(fichaPessoa.getDataFinal());
         }
     }//GEN-LAST:event_formWindowOpened
 
@@ -193,8 +204,8 @@ public class TelaVinculacao extends javax.swing.JDialog {
 
     private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
         OK = true;
-        fichaPessoa.setDataInicial((java.util.Date)ftDataInicial.getValue());
-        fichaPessoa.setDataFinal((java.util.Date)ftDataFinal.getValue());
+        fichaPessoa.setDataInicial((Date)ftDataInicial.getValue());
+        fichaPessoa.setDataFinal((Date)ftDataFinal.getValue());
         dispose();
     }//GEN-LAST:event_pbOkActionPerformed
     

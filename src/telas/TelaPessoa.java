@@ -14,10 +14,8 @@ import dizimo.Funcao;
 import java.awt.Component;
 import java.awt.Container;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.text.NumberFormatter;
@@ -35,7 +33,7 @@ public class TelaPessoa extends javax.swing.JDialog {
     private DBMLocalizador<DBEndereco> lEndereco;
     private DBMPersistor pPessoa;
     private int codigo;
-    private List<DBEndereco> enderecos;
+    private ArrayList<DBEndereco> enderecos;
 
     /**
      * Creates new form TelaPessoa

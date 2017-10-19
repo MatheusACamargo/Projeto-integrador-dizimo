@@ -42,7 +42,7 @@ public class TelaFicha extends javax.swing.JDialog {
 
     private ArrayList<DBFichaPessoa> aFichaPessoa;
     private DBMLocalizador<DBFichaPessoa> lFichaPessoa;
-    private List<DBFichaPessoa> auxiliarFichaPessoa;
+    private ArrayList<DBFichaPessoa> auxiliarFichaPessoa;
 
     /**
      * Creates new form TelaFichaNova
@@ -211,7 +211,7 @@ public class TelaFicha extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pbPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbPessoasActionPerformed
-        TelaPessoasFicha tPessoas = new TelaPessoasFicha(this, true, aFichaPessoa);
+        TelaPessoasFicha tPessoas = new TelaPessoasFicha(this, true, ficha, aFichaPessoa);
         tPessoas.setVisible(true);
         if(tPessoas.isOK()){
             responsavel = tPessoas.getResponsavel();
@@ -221,21 +221,23 @@ public class TelaFicha extends javax.swing.JDialog {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         try {
+            lFicha = new DBMLocalizador<>(DBFicha.class);
+            lFichaPessoa = new DBMLocalizador<>(DBFichaPessoa.class);            
             //Se é inclusão apenas cria um novo objeto
             if(fun == Funcao.INCLUSAO){
                 ficha = new DBFicha();
                 aFichaPessoa = new ArrayList<>();
             }else{
                 //para demais funções busca o registro no banco
-                lFicha = new DBMLocalizador<>(DBFicha.class);
                 ficha = lFicha.procuraRegistro(codigo);
                 if(ficha == null){
                     JOptionPane.showMessageDialog(this, "Ficha de código " + codigo + " não foi lida corretamente do banco!");
                     dispose();
                 }
-                lFichaPessoa = new DBMLocalizador<>(DBFichaPessoa.class);
                 aFichaPessoa = lFichaPessoa.procuraRegistros("intFicha = " + Integer.toString(codigo));
-
+                if(aFichaPessoa == null){
+                    aFichaPessoa = new ArrayList<>();
+                }                
                 responsavel = ficha.getResponsavel();
             }
             pFicha = new DBMPersistor(ficha);
@@ -293,6 +295,7 @@ public class TelaFicha extends javax.swing.JDialog {
                     break;
                 case ALTERACAO:
                     pFicha.altera();
+                    geraIDFichaPessoa();
                     excluiFichaPessoa();
                     insereFichaPessoa();
                     break;
@@ -305,7 +308,6 @@ public class TelaFicha extends javax.swing.JDialog {
     }//GEN-LAST:event_pbOkActionPerformed
     
     private void insereFichaPessoa(){
-        geraIDFichaPessoa();
         for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
             try {
                 pFichaPessoa = new DBMPersistor(fichaPessoa);
@@ -318,11 +320,14 @@ public class TelaFicha extends javax.swing.JDialog {
     
     private void excluiFichaPessoa(){
         try {
-            auxiliarFichaPessoa = lFichaPessoa.procuraRegistros("");
+            auxiliarFichaPessoa = lFichaPessoa.procuraRegistros("intFicha = " + Integer.toString(codigo));
         } catch (DBMException ex) {
             Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
+        if(auxiliarFichaPessoa==null){
+            return;
+        }
+        for (DBFichaPessoa fichaPessoa : auxiliarFichaPessoa) {
             try {
                 pFichaPessoa = new DBMPersistor(fichaPessoa);
                 pFichaPessoa.exclui();
@@ -336,11 +341,16 @@ public class TelaFicha extends javax.swing.JDialog {
         int codigoFichaPessoa = 0;
         try {
             auxiliarFichaPessoa = lFichaPessoa.procuraRegistros("");
+            if(auxiliarFichaPessoa != null){
+                codigoFichaPessoa = auxiliarFichaPessoa.get(auxiliarFichaPessoa.size()-1).getCodigo();
+            }
         } catch (DBMException ex) {
             Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
         }
-        codigoFichaPessoa = auxiliarFichaPessoa.get(auxiliarFichaPessoa.size()).getCodigo();
+        
+        
         for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
+            System.out.println("entrei arqui com" + aFichaPessoa);
             if(fichaPessoa.getCodigo() == 0){
                 codigoFichaPessoa++;
                 fichaPessoa.setCodigo(codigoFichaPessoa);

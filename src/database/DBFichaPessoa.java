@@ -14,20 +14,24 @@ import java.util.Date;
 @DBMNomeTabela(nome = "FichaPessoa")
 public class DBFichaPessoa {
     @DBMPK
-    private Integer codigo;
-    private Integer intFicha;
+    private Integer codigo = 0;
+    private Integer intFicha = 0;
     @DBMExcluido
-    private DBFicha ficha;
-    private Integer intDBPessoa;
+    private DBFicha ficha = null;
+    private Integer intDBPessoa = 0;
     @DBMExcluido
-    private DBPessoa pessoa;
-    private String strDataInicial;
+    private DBPessoa pessoa = null;
+    private String strDataInicial = "";
     @DBMExcluido
-    private Date dataInicial;
-    private String strDataFinal;
+    private Date dataInicial = null;
+    private String strDataFinal = "";
     @DBMExcluido
-    private Date dataFinal;
-
+    private Date dataFinal = null;
+    
+    //Dados para preenchimento do objeto
+    @DBMExcluido
+    private DBMLocalizador<DBPessoa> lPessoa;
+    
     public DBFichaPessoa() {
     }
 
@@ -53,6 +57,7 @@ public class DBFichaPessoa {
 
     public void setFicha(DBFicha ficha) {
         this.ficha = ficha;
+        intFicha = ficha.getCodigo();
     }
 
     public Integer getIntDBPessoa() {
@@ -69,6 +74,7 @@ public class DBFichaPessoa {
 
     public void setPessoa(DBPessoa pessoa) {
         this.pessoa = pessoa;
+        intDBPessoa = pessoa.getCodigo();
     }
 
     public String getStrDataInicial() {
@@ -106,5 +112,17 @@ public class DBFichaPessoa {
         this.dataFinal = dataFinal;
         strDataFinal = Conexao.getInstance().dateToString(dataFinal); 
     }
+    
+    public void preencheObjeto(){
+        try {
+            lPessoa = new DBMLocalizador<>(DBPessoa.class);
+            pessoa = lPessoa.procuraRegistro(intDBPessoa);
+            if(pessoa == null){
+                pessoa = new DBPessoa();
+            }
+            pessoa.preencheObjeto();
+        } catch (DBMException ex) {
+        }
+    }    
     
 }
