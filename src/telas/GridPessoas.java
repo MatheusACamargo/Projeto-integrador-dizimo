@@ -79,6 +79,11 @@ public class GridPessoas extends javax.swing.JDialog {
                 tfFiltroFocusLost(evt);
             }
         });
+        tfFiltro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfFiltroActionPerformed(evt);
+            }
+        });
 
         tPessoas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -273,6 +278,10 @@ public class GridPessoas extends javax.swing.JDialog {
         }
         
     }//GEN-LAST:event_tfFiltroFocusLost
+
+    private void tfFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfFiltroActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfFiltroActionPerformed
 
     //Limpa a tabela caso existam registros
     private void limpaGrid(){

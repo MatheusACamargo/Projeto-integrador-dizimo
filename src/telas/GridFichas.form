@@ -92,6 +92,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="tfFiltro">
       <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="tfFiltroFocusLost"/>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tfFiltroActionPerformed"/>
       </Events>
     </Component>

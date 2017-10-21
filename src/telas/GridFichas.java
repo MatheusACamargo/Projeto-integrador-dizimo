@@ -11,6 +11,7 @@ import database.DBMException;
 import database.DBMLocalizador;
 import database.DBPessoa;
 import dizimo.Funcao;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +29,8 @@ public class GridFichas extends javax.swing.JDialog {
     private DBMLocalizador<DBPessoa> lPessoa;
     private DBEndereco endereco;
     private DBMLocalizador<DBEndereco> lEndereco;
+    
+    private List<DBFicha> listFicha;
 
 
 
@@ -82,6 +85,11 @@ public class GridFichas extends javax.swing.JDialog {
 
         lbFiltro.setText("Filtro");
 
+        tfFiltro.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tfFiltroFocusLost(evt);
+            }
+        });
         tfFiltro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tfFiltroActionPerformed(evt);
@@ -219,22 +227,50 @@ public class GridFichas extends javax.swing.JDialog {
     }//GEN-LAST:event_tfFiltroActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        List<DBFicha> listFicha;
         try {
             lPessoa = new DBMLocalizador<>(DBPessoa.class);
             lEndereco = new DBMLocalizador<>(DBEndereco.class);
             loc = new DBMLocalizador<>(DBFicha.class);
             listFicha = loc.procuraRegistros("");
-            if(listFicha != null){
-                for(DBFicha ficha : listFicha){
-                    dtm.insertRow(tFichas.getRowCount(), toRow(ficha));
-                }
-            }
-
+            carregaGrid();
         } catch (DBMException e) {
         }
     }//GEN-LAST:event_formWindowOpened
 
+    private void tfFiltroFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfFiltroFocusLost
+        try {
+            limpaGrid();
+            if(!tfFiltro.getText().isEmpty()){
+                String busca = "%" + tfFiltro.getText() + "%";
+                listFicha = loc.procuraRegistros("observacoes LIKE ? OR "
+                        + "intResponsavel IN (SELECT codigo FROM Pessoa WHERE nome LIKE ? OR "
+                        + "intEndereco IN (SELECT codigo FROM Endereco WHERE logradouro LIKE ?))", busca, busca, busca);
+            }else{
+                listFicha = loc.procuraRegistros("");
+            }
+            carregaGrid();
+        } catch (DBMException ex) {
+            Logger.getLogger(GridPessoas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_tfFiltroFocusLost
+
+    //Limpa a tabela caso existam registros
+    private void limpaGrid(){
+        if (dtm.getRowCount() > 0) {
+            for (int i = dtm.getRowCount() - 1; i > -1; i--) {
+                dtm.removeRow(i);
+            }
+        }
+    }    
+    
+    private void carregaGrid(){
+        if(listFicha != null){
+            for(DBFicha ficha : listFicha){
+                dtm.insertRow(tFichas.getRowCount(), toRow(ficha));
+            }
+        }
+    }    
+    
     private Object[] toRow(DBFicha ficha){
         Object[] dados = new Object[tFichas.getColumnCount()];
         dados[0] = ficha.getCodigo();
