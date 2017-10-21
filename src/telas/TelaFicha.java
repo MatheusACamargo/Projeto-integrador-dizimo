@@ -311,6 +311,8 @@ public class TelaFicha extends javax.swing.JDialog {
         tfObservacoes.setEnabled(true);
         //Desabilita campos da chave do registro
         tfNumero.setEnabled(false);
+        //Define o número da ficha
+        ficha.setCodigo(Integer.parseInt(tfNumero.getText()));
     }//GEN-LAST:event_tfNumeroFocusLost
 
     private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
@@ -326,6 +328,7 @@ public class TelaFicha extends javax.swing.JDialog {
             switch(fun){
                 case INCLUSAO:
                     pFicha.insere();
+                    geraIDFichaPessoa();
                     insereFichaPessoa();
                     inserePagamento();
                     break;
@@ -361,7 +364,7 @@ public class TelaFicha extends javax.swing.JDialog {
 
     private void excluiFichaPessoa(){
         try {
-            auxiliarFichaPessoa = lFichaPessoa.procuraRegistros("intFicha = " + Integer.toString(codigo));
+            auxiliarFichaPessoa = lFichaPessoa.procuraRegistros("intFicha = " + Integer.toString(ficha.getCodigo()));
         } catch (DBMException ex) {
             Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -397,21 +400,21 @@ public class TelaFicha extends javax.swing.JDialog {
     }
 
     private void inserePagamento(){
-        int ano = 0;
-        Float valor;
+        int ano;
+        double valor;
         for(int row=0; row<tbPagamentos.getRowCount();row++){
             ano = (int) tbPagamentos.getModel().getValueAt(row, 0);
             for (int i = 1; i < 12; i++) {
                 try{
-                    valor = Float.parseFloat(tbPagamentos.getModel().getValueAt(row, i).toString());
+                    valor = Double.parseDouble(tbPagamentos.getModel().getValueAt(row, i).toString());
                     //Se possui valor para gravar neste mês
                     if(valor!=0){
 
-                        System.out.println("gravar: " + ano + " " + valor.toString());
+                        System.out.println("gravar: " + ano + " " + valor);
                         
                         try {
                             pagamento = new DBPagamento();
-                            pagamento.setCodigoFicha(codigo);
+                            pagamento.setCodigoFicha(ficha.getCodigo());
                             pagamento.setValor(valor);
                             
                             Calendar calendar = Calendar.getInstance();
