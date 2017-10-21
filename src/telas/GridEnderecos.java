@@ -10,6 +10,7 @@ import database.DBMException;
 import database.DBMLocalizador;
 import dizimo.Funcao;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -20,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 public class GridEnderecos extends javax.swing.JDialog {
     private DefaultTableModel dtm;
     private DBMLocalizador<DBEndereco> lEndereco;
+    private ArrayList<DBEndereco> listEnd;
 
 
     /**
@@ -46,6 +48,8 @@ public class GridEnderecos extends javax.swing.JDialog {
         btIncluir = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tEnderecos = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        tfFiltro = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Tabela de Endereços");
@@ -88,11 +92,11 @@ public class GridEnderecos extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Código", "Logradouro", "Complemento"
+                "Código", "Logradouro", "Complemento", "Vila"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -100,6 +104,14 @@ public class GridEnderecos extends javax.swing.JDialog {
             }
         });
         jScrollPane1.setViewportView(tEnderecos);
+
+        jLabel1.setText("Filtro");
+
+        tfFiltro.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tfFiltroFocusLost(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -116,7 +128,10 @@ public class GridEnderecos extends javax.swing.JDialog {
                         .addComponent(btConsultar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btExcluir)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfFiltro))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 532, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -128,7 +143,10 @@ public class GridEnderecos extends javax.swing.JDialog {
                     .addComponent(btIncluir)
                     .addComponent(btAlterar)
                     .addComponent(btConsultar)
-                    .addComponent(btExcluir))
+                    .addComponent(btExcluir)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(tfFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
                 .addContainerGap())
@@ -183,7 +201,6 @@ public class GridEnderecos extends javax.swing.JDialog {
     }//GEN-LAST:event_btExcluirActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        ArrayList<DBEndereco> listEnd;
         try {
             //para demais funções busca o registro no banco
             lEndereco = new DBMLocalizador<>(DBEndereco.class);
@@ -197,11 +214,44 @@ public class GridEnderecos extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_formWindowOpened
 
+    private void tfFiltroFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfFiltroFocusLost
+        try {
+            limpaGrid();
+            if(!tfFiltro.getText().isEmpty()){
+                String busca = "%" + tfFiltro.getText() + "%";
+                listEnd = lEndereco.procuraRegistros("logradouro LIKE ? OR descricaoComplementar LIKE ? OR vila LIKE ?", busca, busca, busca);
+            }else{
+                listEnd = lEndereco.procuraRegistros("");
+            }
+            carregaGrid();
+        } catch (DBMException ex) {
+        }
+
+    }//GEN-LAST:event_tfFiltroFocusLost
+
+    //Limpa a tabela caso existam registros
+    private void limpaGrid(){
+        if (dtm.getRowCount() > 0) {
+            for (int i = dtm.getRowCount() - 1; i > -1; i--) {
+                dtm.removeRow(i);
+            }
+        }
+    }
+
+    private void carregaGrid(){
+        if(listEnd != null){
+            for(DBEndereco end : listEnd){
+                dtm.insertRow(tEnderecos.getRowCount(), toRow(end));
+            }
+        }
+    }
+    
     private Object[] toRow(DBEndereco end){
         Object[] dados = new Object[tEnderecos.getColumnCount()];
         dados[0] = end.getCodigo();
         dados[1] = end.getLogradouro();
         dados[2] = end.getDescricaoComplementar();
+        dados[3] = end.getVila();
         return dados;
     }
 
@@ -210,7 +260,9 @@ public class GridEnderecos extends javax.swing.JDialog {
     private javax.swing.JButton btConsultar;
     private javax.swing.JButton btExcluir;
     private javax.swing.JButton btIncluir;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tEnderecos;
+    private javax.swing.JTextField tfFiltro;
     // End of variables declaration//GEN-END:variables
 }

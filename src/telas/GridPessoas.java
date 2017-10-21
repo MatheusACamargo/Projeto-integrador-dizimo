@@ -11,6 +11,8 @@ import database.DBMLocalizador;
 import database.DBPessoa;
 import dizimo.Funcao;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -72,7 +74,11 @@ public class GridPessoas extends javax.swing.JDialog {
 
         jLabel1.setText("Filtro");
 
-        tfFiltro.setText(" ");
+        tfFiltro.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tfFiltroFocusLost(evt);
+            }
+        });
 
         tPessoas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -220,6 +226,7 @@ public class GridPessoas extends javax.swing.JDialog {
             //para demais funções busca o registro no banco
             lPessoa = new DBMLocalizador<>(DBPessoa.class);
             listPes = lPessoa.procuraRegistros("");
+            
             if(listPes != null){
                 for(DBPessoa pes : listPes){
                     dtm.insertRow(tPessoas.getRowCount(), toRow(pes));
@@ -250,6 +257,40 @@ public class GridPessoas extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_btSelecionarActionPerformed
 
+    //Ao sair do campo, recarrega o grid aplicando o filtro
+    private void tfFiltroFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfFiltroFocusLost
+        try {
+            limpaGrid();
+            if(!tfFiltro.getText().isEmpty()){
+                String busca = "%" + tfFiltro.getText() + "%";
+                listPes = lPessoa.procuraRegistros("nome LIKE ? OR intEndereco IN (SELECT codigo FROM Endereco WHERE logradouro LIKE ?)", busca, busca);
+            }else{
+                listPes = lPessoa.procuraRegistros("");
+            }
+            carregaGrid();
+        } catch (DBMException ex) {
+            Logger.getLogger(GridPessoas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_tfFiltroFocusLost
+
+    //Limpa a tabela caso existam registros
+    private void limpaGrid(){
+        if (dtm.getRowCount() > 0) {
+            for (int i = dtm.getRowCount() - 1; i > -1; i--) {
+                dtm.removeRow(i);
+            }
+        }
+    }
+
+    private void carregaGrid(){
+        if(listPes != null){
+            for(DBPessoa pes : listPes){
+                dtm.insertRow(tPessoas.getRowCount(), toRow(pes));
+            }
+        }
+    }
+    
     private Object[] toRow(DBPessoa pes){
         DBEndereco end = pes.getEndereco();
         Object[] dados = new Object[tPessoas.getColumnCount()];
