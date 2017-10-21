@@ -5,15 +5,19 @@
  */
 package telas;
 
+import database.Conexao;
 import database.DBEndereco;
 import database.DBFicha;
 import database.DBFichaPessoa;
 import database.DBMException;
 import database.DBMLocalizador;
 import database.DBMPersistor;
+import database.DBPagamento;
 import database.DBPessoa;
 import dizimo.Funcao;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -31,6 +35,13 @@ public class TelaFicha extends javax.swing.JDialog {
     private DBFicha ficha;
     private DBMLocalizador<DBFicha> lFicha;
     private DBMPersistor pFicha;
+    private DBMPersistor pFichaPessoa;
+    
+    private DBPagamento pagamento;
+    private DBMPersistor pPagamento;
+    private DBMLocalizador<DBPagamento> lPagamento;
+    private ArrayList<DBPagamento> aPagamentoGravados;
+
 
     private DBPessoa responsavel;
     private DBMLocalizador<DBPessoa> lPessoa;
@@ -40,6 +51,7 @@ public class TelaFicha extends javax.swing.JDialog {
 
     private ArrayList<DBFichaPessoa> aFichaPessoa;
     private DBMLocalizador<DBFichaPessoa> lFichaPessoa;
+    private ArrayList<DBFichaPessoa> auxiliarFichaPessoa;
 
     /**
      * Creates new form TelaFichaNova
@@ -208,7 +220,7 @@ public class TelaFicha extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pbPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbPessoasActionPerformed
-        TelaPessoasFicha tPessoas = new TelaPessoasFicha(this, true, aFichaPessoa);
+        TelaPessoasFicha tPessoas = new TelaPessoasFicha(this, true, ficha, aFichaPessoa);
         tPessoas.setVisible(true);
         if(tPessoas.isOK()){
             responsavel = tPessoas.getResponsavel();
@@ -218,22 +230,31 @@ public class TelaFicha extends javax.swing.JDialog {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         try {
+            lFicha = new DBMLocalizador<>(DBFicha.class);
+            lFichaPessoa = new DBMLocalizador<>(DBFichaPessoa.class);
+            lPagamento = new DBMLocalizador<>(DBPagamento.class);
             //Se é inclusão apenas cria um novo objeto
             if(fun == Funcao.INCLUSAO){
                 ficha = new DBFicha();
                 aFichaPessoa = new ArrayList<>();
+                aPagamentoGravados = new ArrayList<>();
             }else{
                 //para demais funções busca o registro no banco
-                lFicha = new DBMLocalizador<>(DBFicha.class);
                 ficha = lFicha.procuraRegistro(codigo);
                 if(ficha == null){
                     JOptionPane.showMessageDialog(this, "Ficha de código " + codigo + " não foi lida corretamente do banco!");
                     dispose();
                 }
-                lFichaPessoa = new DBMLocalizador<>(DBFichaPessoa.class);
                 aFichaPessoa = lFichaPessoa.procuraRegistros("intFicha = " + Integer.toString(codigo));
-
+                if(aFichaPessoa == null){
+                    aFichaPessoa = new ArrayList<>();
+                }
                 responsavel = ficha.getResponsavel();
+                aPagamentoGravados = lPagamento.procuraRegistros("codigoFicha = " + Integer.toString(codigo));
+                if(aPagamentoGravados == null){
+                    aPagamentoGravados = new ArrayList<>();
+                }
+
             }
             pFicha = new DBMPersistor(ficha);
         } catch (DBMException e) {
@@ -258,9 +279,28 @@ public class TelaFicha extends javax.swing.JDialog {
         //Carrega conteúdo padrão para a lista de pagamentos
         DefaultTableModel dtmPagamentos = (DefaultTableModel) tbPagamentos.getModel();
         Object[] rowDefault = {2017, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-",0};
+        Object[] rowInserida;
         for (int i = 0; i < 20; i++) {
-            rowDefault[0] = 2017 - i;
-            dtmPagamentos.addRow(rowDefault);
+            rowInserida = rowDefault.clone();
+            rowInserida[0] = 2017 - i;
+            
+            for (DBPagamento pagamentoGravado : aPagamentoGravados) {
+                Calendar cal = Calendar.getInstance();
+                
+                Date dat = pagamentoGravado.getDataReferencia();
+                
+                cal.setTime(dat);
+                int ano = cal.get(Calendar.YEAR);
+                int mes = cal.get(Calendar.MONTH);
+                if(ano == (int) rowInserida[0]){
+                    for (int j = 0; j < 12; j++) {
+                        if(mes == j){
+                            rowInserida[j+1] = pagamentoGravado.getValor();
+                        }
+                    }
+                }    
+            }
+            dtmPagamentos.addRow(rowInserida);
         }
     }//GEN-LAST:event_formWindowOpened
 
@@ -271,6 +311,8 @@ public class TelaFicha extends javax.swing.JDialog {
         tfObservacoes.setEnabled(true);
         //Desabilita campos da chave do registro
         tfNumero.setEnabled(false);
+        //Define o número da ficha
+        ficha.setCodigo(Integer.parseInt(tfNumero.getText()));
     }//GEN-LAST:event_tfNumeroFocusLost
 
     private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
@@ -286,18 +328,128 @@ public class TelaFicha extends javax.swing.JDialog {
             switch(fun){
                 case INCLUSAO:
                     pFicha.insere();
+                    geraIDFichaPessoa();
+                    insereFichaPessoa();
+                    inserePagamento();
                     break;
                 case ALTERACAO:
                     pFicha.altera();
+                    geraIDFichaPessoa();
+                    excluiFichaPessoa();
+                    insereFichaPessoa();
+                    
+                    excluiPagamento();
+                    inserePagamento();
                     break;
                 case EXCLUSAO:
                     pFicha.exclui();
+                    excluiFichaPessoa();
+                    excluiPagamento();
                     break;
             }
         } catch (DBMException e) {
         }
     }//GEN-LAST:event_pbOkActionPerformed
 
+    private void insereFichaPessoa(){
+        for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
+            try {
+                pFichaPessoa = new DBMPersistor(fichaPessoa);
+                pFichaPessoa.insere();
+            } catch (DBMException ex) {
+                Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void excluiFichaPessoa(){
+        try {
+            auxiliarFichaPessoa = lFichaPessoa.procuraRegistros("intFicha = " + Integer.toString(ficha.getCodigo()));
+        } catch (DBMException ex) {
+            Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(auxiliarFichaPessoa==null){
+            return;
+        }
+        for (DBFichaPessoa fichaPessoa : auxiliarFichaPessoa) {
+            try {
+                pFichaPessoa = new DBMPersistor(fichaPessoa);
+                pFichaPessoa.exclui();
+            } catch (DBMException ex) {
+                Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void geraIDFichaPessoa(){
+        int codigoFichaPessoa = 0;
+        try {
+            auxiliarFichaPessoa = lFichaPessoa.procuraRegistros("");
+            if(auxiliarFichaPessoa != null){
+                codigoFichaPessoa = auxiliarFichaPessoa.get(auxiliarFichaPessoa.size()-1).getCodigo();
+            }
+        } catch (DBMException ex) {
+            Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
+            if(fichaPessoa.getCodigo() == 0){
+                codigoFichaPessoa++;
+                fichaPessoa.setCodigo(codigoFichaPessoa);
+            }
+        }
+    }
+
+    private void inserePagamento(){
+        int ano;
+        double valor;
+        for(int row=0; row<tbPagamentos.getRowCount();row++){
+            ano = (int) tbPagamentos.getModel().getValueAt(row, 0);
+            for (int i = 1; i < 12; i++) {
+                try{
+                    valor = Double.parseDouble(tbPagamentos.getModel().getValueAt(row, i).toString());
+                    //Se possui valor para gravar neste mês
+                    if(valor!=0){
+
+                        System.out.println("gravar: " + ano + " " + valor);
+                        
+                        try {
+                            pagamento = new DBPagamento();
+                            pagamento.setCodigoFicha(ficha.getCodigo());
+                            pagamento.setValor(valor);
+                            
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.clear();
+                            calendar.set(Calendar.MONTH, i-1);
+                            calendar.set(Calendar.YEAR, ano);
+                            pagamento.setDataReferencia(calendar.getTime());
+                            
+                            //pagamento.setDataPagamento();
+                            pPagamento= new DBMPersistor(pagamento);
+                            pPagamento.insere();
+                        } catch (DBMException ex) {
+                            Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    }
+                }catch(NumberFormatException e){
+                }
+            }
+        }
+    }
+
+    private void excluiPagamento(){
+        DBMPersistor pPagamentoExcluir;
+        for (DBPagamento aPagamentoGravado : aPagamentoGravados) {
+            try {
+                
+                pPagamentoExcluir = new DBMPersistor(aPagamentoGravado);
+                pPagamentoExcluir.exclui();
+            } catch (DBMException ex) {
+                
+            }            
+        }
+    }
+    
     private void exibeResponsavel(DBPessoa responsavel){
         tfResponsavel.setText(responsavel.getNome());
         try {

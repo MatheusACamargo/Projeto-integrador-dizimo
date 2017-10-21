@@ -5,7 +5,6 @@
  */
 package database;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -15,15 +14,15 @@ import java.util.Date;
 @DBMNomeTabela(nome = "Pagamento")
 public class DBPagamento {
     @DBMPK
-    private Integer codigoFicha;
+    private Integer codigoFicha = 0;
     @DBMPK
-    private String strDataReferencia;
+    private String strDataReferencia = "";
     @DBMExcluido
-    private Date dataReferencia;
-    private float valor;
-    private String strDataPagamento;
+    private Date dataReferencia = null;
+    private double valor = 0;
+    private String strDataPagamento = "";
     @DBMExcluido
-    private Date dataPagamento;
+    private Date dataPagamento = null;
 
     public DBPagamento() {
     }
@@ -54,11 +53,11 @@ public class DBPagamento {
         strDataReferencia = Conexao.getInstance().dateToString(dataReferencia);
     }
 
-    public float getValor() {
+    public double getValor() {
         return valor;
     }
 
-    public void setValor(float valor) {
+    public void setValor(double valor) {
         this.valor = valor;
     }
 

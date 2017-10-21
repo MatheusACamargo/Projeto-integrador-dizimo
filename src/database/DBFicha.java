@@ -15,11 +15,11 @@ import java.util.logging.Logger;
 @DBMNomeTabela(nome = "Ficha")
 public class DBFicha {
     @DBMPK
-    private Integer codigo;
-    private Integer intResponsavel;
+    private Integer codigo = 0;
+    private Integer intResponsavel = 0;
     @DBMExcluido
-    private DBPessoa responsavel;
-    private String observacoes;
+    private DBPessoa responsavel = null;
+    private String observacoes = "";
     
     //Dados para preenchimento do objeto
     @DBMExcluido
