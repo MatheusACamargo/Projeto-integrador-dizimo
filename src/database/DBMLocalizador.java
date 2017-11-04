@@ -178,7 +178,7 @@ public class DBMLocalizador<T extends Object>{
         for (Method met : metodos) {
             if(met.getName().equalsIgnoreCase("preencheObjeto")){
                 try {
-                    met.invoke(novo);
+                    met.invoke(novo, null);
                 } catch (Exception e) {
                     throw new DBMException(e);
                 }
