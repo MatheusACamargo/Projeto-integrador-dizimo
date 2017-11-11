@@ -27,6 +27,9 @@ public class GridPagamentos extends javax.swing.JDialog {
     private ArrayList<DBPagamento> listPagamentos;
     private DateFormat editaData;
     private DateFormat editaDataDigitada;
+    private DateFormat editaPeriodo;
+    private DateFormat editaPeriodoDigitado;
+    private DateFormat editaAno;
     /**
      * Creates new form GridPagamentos
      */
@@ -132,20 +135,37 @@ public class GridPagamentos extends javax.swing.JDialog {
             if(!tfFiltro.getText().isEmpty()){
                 Date dataDigitada = null;
                 String buscaData = "";
+                String buscaPeriodo = "";
+                String buscaAno = "";
                 String buscaNome = "%" + tfFiltro.getText() + "%";
                 try {
                     dataDigitada = editaData.parse(tfFiltro.getText());
                     buscaData = editaDataDigitada.format(dataDigitada);
                 } catch (ParseException ex) {
-                    //se parse não funcionou então não é uma data
+                    try {
+                        //se parse da data não funcionou então tenta identificar como um período
+                        dataDigitada = editaPeriodo.parse(tfFiltro.getText());
+                        buscaPeriodo = editaPeriodoDigitado.format(dataDigitada) + "%";
+                    } catch (ParseException ex1) {
+                        try {
+                            //se parse de período não funcionou então tenta identificar como um ano
+                            editaAno.parse(tfFiltro.getText());
+                            buscaAno = "%" + tfFiltro.getText() + "%";
+                        } catch (ParseException ex2) {
+                            //Se nenhum parse funcionou não se trata de uma data
+                        }
+                    }
                 }
                 
                 listPagamentos = lPagamento.procuraRegistros("strDataReferencia LIKE ? OR codigoFicha = ? OR "
+                        + "strDataReferencia LIKE ? OR strDataReferencia LIKE ? OR "
                         + "codigoFicha IN (SELECT codigo FROM Ficha WHERE codigo = codigoFicha AND "
-                        + "intResponsavel IN (SELECT codigo FROM pessoa WHERE codigo = intResponsavel AND nome LIKE ?))", 
-                        buscaData, tfFiltro.getText(), buscaNome);
+                        + "intResponsavel IN (SELECT codigo FROM pessoa WHERE codigo = intResponsavel AND nome LIKE ?)) "
+                        + "ORDER BY strDataReferencia", 
+                        buscaData, tfFiltro.getText(), buscaPeriodo, buscaAno, buscaNome);
             }else{
-                listPagamentos = lPagamento.procuraRegistros("");
+                //Precisa do 1=1 para funcionar como um WHERE
+                listPagamentos = lPagamento.procuraRegistros("1=1 ORDER BY strDataReferencia");
             }
             carregaGrid();
         } catch (DBMException ex) {
@@ -154,11 +174,14 @@ public class GridPagamentos extends javax.swing.JDialog {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         editaData = new SimpleDateFormat("dd/MM/yyyy");
+        editaPeriodo = new SimpleDateFormat("MM/yyyy");
+        editaAno = new SimpleDateFormat("yyyy");
         editaDataDigitada = new SimpleDateFormat("yyyy-MM-dd");
+        editaPeriodoDigitado = new SimpleDateFormat("yyyy-MM");
         try {
             //para demais funções busca o registro no banco
             lPagamento = new DBMLocalizador<>(DBPagamento.class);
-            listPagamentos = lPagamento.procuraRegistros("");
+            listPagamentos = lPagamento.procuraRegistros("1=1 ORDER BY strDataReferencia");
             carregaGrid();
         } catch (DBMException e) {
         }
@@ -191,7 +214,6 @@ public class GridPagamentos extends javax.swing.JDialog {
         dados[4] = false;
         return dados;
     }
-    
     
     /**
      * @param args the command line arguments
