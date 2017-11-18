@@ -18,7 +18,7 @@ public class DBPessoa {
     @DBMExcluido
     private DBEndereco endereco = null;
     private Integer numCasa = 0;
-    private Integer telefone = 0;
+    private String telefone = "";
     private String estadoCivil = "";
     @DBMExcluido
     private boolean casamentoCivil = false;
@@ -106,11 +106,11 @@ public class DBPessoa {
         this.numCasa = numCasa;
     }
 
-    public Integer getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(Integer telefone) {
+    public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 

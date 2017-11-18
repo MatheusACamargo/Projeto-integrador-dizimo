@@ -6,6 +6,7 @@
 package telas;
 
 import database.DBEndereco;
+import database.DBFichaPessoa;
 import database.DBMException;
 import database.DBMLocalizador;
 import database.DBMPersistor;
@@ -16,9 +17,13 @@ import java.awt.Container;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.text.NumberFormatter;
+import sun.awt.CausedFocusEvent;
 
 /**
  *
@@ -129,7 +134,11 @@ public class TelaPessoa extends javax.swing.JDialog {
 
         jLabel8.setText("Religião");
 
-        ftTelefone.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        try {
+            ftTelefone.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("(##)#####-####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
 
         jLabel9.setText("Instrução");
 
@@ -153,6 +162,12 @@ public class TelaPessoa extends javax.swing.JDialog {
 
         jLabel14.setText("Salário");
 
+        tfNome.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tfNomeFocusLost(evt);
+            }
+        });
+
         coSalario.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mínimo", "Mais", "Menos" }));
 
         ftNumCasa.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
@@ -164,6 +179,11 @@ public class TelaPessoa extends javax.swing.JDialog {
         ftNumFichaAtual.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
 
         ftCodigo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        ftCodigo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                ftCodigoFocusLost(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -315,6 +335,14 @@ public class TelaPessoa extends javax.swing.JDialog {
     }
 
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
+        if(!validaFtCodigo()){
+            ftCodigo.requestFocus();
+            return;
+        }
+        if(!validaTfNome()){
+            tfNome.requestFocus();
+            return;
+        }
         dispose();
         OK = true;
         //Carrega os campos do objeto com o conteúdo da tela
@@ -328,7 +356,7 @@ public class TelaPessoa extends javax.swing.JDialog {
         }
         pessoa.setEndereco(endereco);
         pessoa.setNumCasa(toInteger(ftNumCasa));
-        pessoa.setTelefone(toInteger(ftTelefone));
+        pessoa.setTelefone(ftTelefone.getText());
         pessoa.setEstadoCivil((String) coEstadoCivil.getSelectedItem());
         pessoa.setCasamentoReligioso(cbCasamentoReligioso.isSelected());
         pessoa.setCasamentoCivil(cbCasamentoCivil.isSelected());
@@ -362,22 +390,41 @@ public class TelaPessoa extends javax.swing.JDialog {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         try {
+            //Prepara a classe que localiza registros no banco
+            lPessoa = new DBMLocalizador<>(DBPessoa.class);
+            //Prepara montagem das opções de endereços
+            lEndereco = new DBMLocalizador<>(DBEndereco.class);
+            enderecos = lEndereco.procuraRegistros("");
             //Se é inclusão apenas cria um novo objeto
             if(fun == Funcao.INCLUSAO){
+                if(enderecos == null){
+                    JOptionPane.showMessageDialog(this, "Ainda não há endereços cadastrados!\nEfetue este cadastro primeiro!");
+                    dispose();
+                    return;
+                }
                 pessoa = new DBPessoa();
             }else{
                 //para demais funções busca o registro no banco
-                lPessoa = new DBMLocalizador<>(DBPessoa.class);
                 pessoa = lPessoa.procuraRegistro(codigo);
                 if(pessoa == null){
                     JOptionPane.showMessageDialog(this, "Pessoa de código " + codigo + " não foi lida corretamente do banco!");
                     dispose();
+                    return;
                 }
+                //Se estiver na exclusão
+                if(fun == Funcao.EXCLUSAO){
+                    DBMLocalizador lFichaPessoa= new DBMLocalizador<>(DBFichaPessoa.class);
+                    ArrayList<DBFichaPessoa> listPesFic;
+                    listPesFic = lFichaPessoa.procuraRegistros("intDBPessoa = ?", codigo);
+                    if(listPesFic != null){
+                        JOptionPane.showMessageDialog(this, "Pessoa de código " + codigo + " ainda é utilizada na ficha " + listPesFic.get(0).getIntFicha() + "!\nPor este motivo não pode ser excluída!");
+                        dispose();
+                        return;
+                    }
+                }
+
             }
             pPessoa = new DBMPersistor(pessoa);
-            //Prepara montagem das opções de endereços
-            lEndereco = new DBMLocalizador<>(DBEndereco.class);
-            enderecos = lEndereco.procuraRegistros("");
             endereco = lEndereco.procuraRegistro(pessoa.getIntEndereco());
 
         } catch (DBMException e) {
@@ -386,6 +433,12 @@ public class TelaPessoa extends javax.swing.JDialog {
         if(fun == Funcao.CONSULTA || fun == Funcao.EXCLUSAO){
             //desabilita todos os campos da tela
             habilitaComponentes(this, false);
+        }else{
+            //Nunca aceita a ficha atual nem o código pois é somente exibição
+            ftNumFichaAtual.setEnabled(false);
+            if(fun == Funcao.ALTERACAO){
+                ftCodigo.setEnabled(false);
+            }
         }
         //carrega os campos da tela com o conteúdo do objeto
         ftCodigo.setValue(pessoa.getCodigo().longValue());
@@ -400,7 +453,7 @@ public class TelaPessoa extends javax.swing.JDialog {
             coEndereco.setSelectedItem(0);
         }
         ftNumCasa.setValue(pessoa.getNumCasa().longValue());
-        ftTelefone.setValue(pessoa.getTelefone().longValue());
+        ftTelefone.setText(pessoa.getTelefone());
         coEstadoCivil.setSelectedItem(pessoa.getEstadoCivil());
         cbCasamentoCivil.setSelected(pessoa.isCasamentoCivil());
         cbCasamentoReligioso.setSelected(pessoa.isCasamentoReligioso());
@@ -417,16 +470,63 @@ public class TelaPessoa extends javax.swing.JDialog {
         tfProfissao.setText(pessoa.getProfissao());
     }//GEN-LAST:event_formWindowOpened
 
+    private void ftCodigoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ftCodigoFocusLost
+        if(evt.isTemporary())return;
+        if(((CausedFocusEvent) evt).getCause() == CausedFocusEvent.Cause.CLEAR_GLOBAL_FOCUS_OWNER)return;
+        validaFtCodigo();
+    }//GEN-LAST:event_ftCodigoFocusLost
+
+    private void tfNomeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfNomeFocusLost
+        if(evt.isTemporary())return;
+        if(((CausedFocusEvent) evt).getCause() == CausedFocusEvent.Cause.CLEAR_GLOBAL_FOCUS_OWNER)return;
+        validaTfNome();
+    }//GEN-LAST:event_tfNomeFocusLost
+
+    private boolean validaFtCodigo(){
+        //Se não estiver na inclusão
+        if(fun != Funcao.INCLUSAO){
+            return true;
+        }
+        int cod;
+        //Se código em branco ou zerado
+        if(ftCodigo.getText().isEmpty() || (cod = Integer.parseInt(ftCodigo.getText())) == 0){
+            JOptionPane.showMessageDialog(this, "Código deve ser informado!");
+            return false;
+        }
+        try {
+            if(lPessoa.procuraRegistro(cod) != null){
+                JOptionPane.showMessageDialog(this, "Pessoa de código " + cod + " já foi cadastrada!\nUtilize outro código!");
+                return false;
+            }
+        } catch (DBMException ex) {
+        }
+        return true;
+    }
+
+    private boolean validaTfNome(){
+        //Se não estiver na inclusão ou na alteração
+        if(fun == Funcao.INCLUSAO || fun == Funcao.ALTERACAO){
+            //Se em branco
+            if(tfNome.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Nome deve ser informado!");
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void habilitaComponentes(Container container, boolean enable) {
         Component[] components = container.getComponents();
         for (Component component : components) {
+            //Não desabilita botões
+            if(!enable && component instanceof JButton)continue;
             component.setEnabled(enable);
             if (component instanceof Container) {
                 habilitaComponentes((Container)component, enable);
             }
         }
     }
-    
+
     private Integer toInteger(JFormattedTextField field){
         return ((Long) field.getValue()).intValue();
     }

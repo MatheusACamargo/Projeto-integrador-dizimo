@@ -263,8 +263,8 @@
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="ftTelefone">
       <Properties>
-        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
-          <Format subtype="1" type="0"/>
+        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor" preCode="try {" postCode="} catch (java.text.ParseException ex) {&#xa;ex.printStackTrace();&#xa;}">
+          <Format format="(##)#####-####" subtype="-1" type="5"/>
         </Property>
       </Properties>
     </Component>
@@ -355,6 +355,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="tfNome">
+      <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="tfNomeFocusLost"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JComboBox" name="coSalario">
       <Properties>
@@ -410,6 +413,9 @@
           <Format subtype="1" type="0"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="ftCodigoFocusLost"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JFormattedTextField(new NumberFormatter(NumberFormat.getInstance()))"/>
       </AuxValues>

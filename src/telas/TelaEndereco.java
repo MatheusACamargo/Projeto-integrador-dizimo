@@ -9,9 +9,14 @@ import database.DBEndereco;
 import database.DBMException;
 import database.DBMLocalizador;
 import database.DBMPersistor;
+import database.DBPessoa;
 import dizimo.Funcao;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import sun.awt.CausedFocusEvent;
 
 /**
  *
@@ -20,11 +25,14 @@ import javax.swing.JOptionPane;
 public class TelaEndereco extends javax.swing.JDialog {
     private Funcao fun;
     private boolean OK;
+    private boolean validado;
     private DBEndereco endereco;
     private DBMLocalizador<DBEndereco> lEndereco;
+    private DBMLocalizador<DBPessoa> lPessoa;
+    private ArrayList<DBPessoa> listPes;
     private DBMPersistor pEndereco;
     private int codigo;
-    
+
 
     /**
      * Creates new form TelaEndereco
@@ -84,11 +92,22 @@ public class TelaEndereco extends javax.swing.JDialog {
 
         jLabel3.setText("CEP");
 
+        tfLogradouro.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tfLogradouroFocusLost(evt);
+            }
+        });
+
         jLabel4.setText("Desc.Complementar");
 
         jLabel5.setText("Vila");
 
         ftCodigo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        ftCodigo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                ftCodigoFocusLost(evt);
+            }
+        });
 
         ftCep.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
 
@@ -166,6 +185,14 @@ public class TelaEndereco extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
+        if(!validaFtCodigo()){
+            ftCodigo.requestFocus();
+            return;
+        }
+        if(!validaTfLogradouro()){
+            tfLogradouro.requestFocus();
+            return;
+        }
         dispose();
         OK = true;
         //Carrega os campos do objeto com o conteúdo da tela
@@ -194,16 +221,29 @@ public class TelaEndereco extends javax.swing.JDialog {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         try {
+            //Prepara a classe que localiza registros no banco
+            lEndereco = new DBMLocalizador<>(DBEndereco.class);
             //Se é inclusão apenas cria um novo objeto
             if(fun == Funcao.INCLUSAO){
                 endereco = new DBEndereco();
             }else{
+            //Se é inclusão apenas cria um novo objeto
                 //para demais funções busca o registro no banco
-                lEndereco = new DBMLocalizador<>(DBEndereco.class);
                 endereco = lEndereco.procuraRegistro(codigo);
                 if(endereco == null){
                     JOptionPane.showMessageDialog(this, "Endereço de código " + codigo + " não foi lido corretamente do banco!");
                     dispose();
+                    return;
+                }
+                //Se estiver na exclusão
+                if(fun == Funcao.EXCLUSAO){
+                    lPessoa = new DBMLocalizador<>(DBPessoa.class);
+                    listPes = lPessoa.procuraRegistros("intEndereco = ?", codigo);
+                    if(listPes != null){
+                        JOptionPane.showMessageDialog(this, "Endereço de código " + codigo + " ainda é utilizado na pessoa " + listPes.get(0).getCodigo() + "-"+ listPes.get(0).getNome() + "!\nPor este motivo não pode ser excluído!");
+                        dispose();
+                        return;
+                    }
                 }
             }
             pEndereco = new DBMPersistor(endereco);
@@ -219,6 +259,10 @@ public class TelaEndereco extends javax.swing.JDialog {
             tfDescComplem.setEnabled(false);
             tfVila.setEnabled(false);
         }
+        //se é função que não aceita chave
+        if(fun == Funcao.ALTERACAO){
+            ftCodigo.setEnabled(false);
+        }
         //carrega os campos da tela com o conteúdo do objeto
         tfBairro.setText(endereco.getBairro());
         ftCep.setValue(endereco.getCep().longValue());
@@ -228,10 +272,56 @@ public class TelaEndereco extends javax.swing.JDialog {
         tfVila.setText(endereco.getVila());
     }//GEN-LAST:event_formWindowOpened
 
+    private void ftCodigoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ftCodigoFocusLost
+        if(evt.isTemporary())return;
+        if(((CausedFocusEvent) evt).getCause() == CausedFocusEvent.Cause.CLEAR_GLOBAL_FOCUS_OWNER)return;
+        validaFtCodigo();
+    }//GEN-LAST:event_ftCodigoFocusLost
+
+    private void tfLogradouroFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfLogradouroFocusLost
+        if(evt.isTemporary())return;
+        if(((CausedFocusEvent) evt).getCause() == CausedFocusEvent.Cause.CLEAR_GLOBAL_FOCUS_OWNER)return;
+        validaTfLogradouro();
+    }//GEN-LAST:event_tfLogradouroFocusLost
+
+    private boolean validaFtCodigo(){
+        //Se não estiver na inclusão
+        if(fun != Funcao.INCLUSAO){
+            return true;
+        }
+        int cod;
+        //Se código em branco ou zerado
+        if(ftCodigo.getText().isEmpty() || (cod = Integer.parseInt(ftCodigo.getText())) == 0){
+            JOptionPane.showMessageDialog(this, "Código deve ser informado!");
+            return false;
+        }
+        try {
+            if(lEndereco.procuraRegistro(cod) != null){
+                JOptionPane.showMessageDialog(this, "Endereço de código " + cod + " já foi cadastrado!\nUtilize outro código!");
+                return false;
+            }
+        } catch (DBMException ex) {
+            Logger.getLogger(TelaEndereco.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return true;
+    }
+
+    private boolean validaTfLogradouro(){
+        //Se não estiver na inclusão ou na alteração
+        if(fun == Funcao.INCLUSAO || fun == Funcao.ALTERACAO){
+            //Se código em branco ou zerado
+            if(tfLogradouro.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Logradouro deve ser informado!");
+                return false;
+            }
+        }
+        return true;
+    }
+
     private Integer toInteger(JFormattedTextField field){
         return ((Long) field.getValue()).intValue();
     }
-            
+
     public boolean isOK() {
         return OK;
     }
