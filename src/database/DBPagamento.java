@@ -23,6 +23,12 @@ public class DBPagamento {
     private String strDataPagamento = "";
     @DBMExcluido
     private Date dataPagamento = null;
+    @DBMExcluido
+    private DBFicha ficha = null;
+    
+    //Dados para preenchimento do objeto
+    @DBMExcluido
+    private DBMLocalizador<DBFicha> lFicha;    
 
     public DBPagamento() {
     }
@@ -78,5 +84,23 @@ public class DBPagamento {
         this.dataPagamento = dataPagamento;
         strDataPagamento = Conexao.getInstance().dateToString(dataPagamento); 
     }
+    
+    public DBFicha getFicha(){
+        return ficha;
+    }
+    
+    public void preencheObjeto(){
+        try {
+            lFicha = new DBMLocalizador<>(DBFicha.class);
+            ficha = lFicha.procuraRegistro(codigoFicha);
+            if(ficha == null){
+                ficha = new DBFicha();
+                ficha.preencheObjeto();
+            }
+        } catch (DBMException ex) {
+            
+        }
+    }
+    
     
 }

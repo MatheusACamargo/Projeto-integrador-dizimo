@@ -224,7 +224,9 @@ public class TelaFicha extends javax.swing.JDialog {
         tPessoas.setVisible(true);
         if(tPessoas.isOK()){
             responsavel = tPessoas.getResponsavel();
-            exibeResponsavel(responsavel);
+            if(responsavel!=null){
+                exibeResponsavel(responsavel);
+            }
         }
     }//GEN-LAST:event_pbPessoasActionPerformed
 
@@ -260,7 +262,7 @@ public class TelaFicha extends javax.swing.JDialog {
         } catch (DBMException e) {
         }
         //se é função que não aceita os dados
-        if(fun == Funcao.CONSULTA || fun == Funcao.EXCLUSAO){
+        if(fun == Funcao.CONSULTA || fun == Funcao.EXCLUSAO || fun == Funcao.INCLUSAO){
             //Desabilita campos deixando apenas a chave informada
             tfResponsavel.setEnabled(false);
             tfEndereco.setEnabled(false);
@@ -275,17 +277,20 @@ public class TelaFicha extends javax.swing.JDialog {
             tfEndereco.setText(ficha.getResponsavel().getEndereco().getLogradouro());
             tfObservacoes.setText(ficha.getObservacoes());
         }
-
+        
+        //Busca ano atual
+        Calendar cal = Calendar.getInstance();
+        int anoAtual = cal.get(Calendar.YEAR);
+        
         //Carrega conteúdo padrão para a lista de pagamentos
         DefaultTableModel dtmPagamentos = (DefaultTableModel) tbPagamentos.getModel();
-        Object[] rowDefault = {2017, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-",0};
+        Object[] rowDefault = {anoAtual, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-",0};
         Object[] rowInserida;
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 30; i++) {
             rowInserida = rowDefault.clone();
-            rowInserida[0] = 2017 - i;
+            rowInserida[0] = anoAtual - i;
             
             for (DBPagamento pagamentoGravado : aPagamentoGravados) {
-                Calendar cal = Calendar.getInstance();
                 
                 Date dat = pagamentoGravado.getDataReferencia();
                 
@@ -305,18 +310,35 @@ public class TelaFicha extends javax.swing.JDialog {
     }//GEN-LAST:event_formWindowOpened
 
     private void tfNumeroFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfNumeroFocusLost
+        try{
+        //Define o número da ficha
+            ficha.setCodigo(Integer.parseInt(tfNumero.getText()));
+            if(fun == Funcao.INCLUSAO){
+            //Verificar se ficha informada já existe para inclusão;
+                if(lFicha.procuraRegistro(ficha.getCodigo()) != null){
+                    JOptionPane.showMessageDialog(this, "Ficha de código " + ficha.getCodigo() + " já existe!");
+                    tfNumero.setText("");
+                    tfNumero.requestFocus();
+                    return;
+                }               
+            }
+            
+        }catch(NumberFormatException e){
+        } catch (DBMException ex) {
+        }
         //Habilita campos de dados
         tbPagamentos.setEnabled(true);
         pbPessoas.setEnabled(true);
         tfObservacoes.setEnabled(true);
         //Desabilita campos da chave do registro
-        tfNumero.setEnabled(false);
-        //Define o número da ficha
-        ficha.setCodigo(Integer.parseInt(tfNumero.getText()));
+        tfNumero.setEnabled(false);        
     }//GEN-LAST:event_tfNumeroFocusLost
 
     private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
         dispose();
+        if(tfNumero.getText().isEmpty()){
+            return;
+        }
         OK = true;
         //Carrega dados da manuteção para a ficha
         ficha.setCodigo(Integer.parseInt(tfNumero.getText()));
