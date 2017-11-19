@@ -8,6 +8,10 @@ package telas;
 import database.DBMException;
 import database.DBMLocalizador;
 import database.DBPagamento;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,7 +19,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  *
@@ -52,6 +64,7 @@ public class GridPagamentos extends javax.swing.JDialog {
         lbFiltro = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tPagamentos = new javax.swing.JTable();
+        jExpXls = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Tabela de pagamentos");
@@ -99,6 +112,13 @@ public class GridPagamentos extends javax.swing.JDialog {
             tPagamentos.getColumnModel().getColumn(4).setPreferredWidth(30);
         }
 
+        jExpXls.setText("Exportar XLS");
+        jExpXls.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jExpXlsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -110,7 +130,8 @@ public class GridPagamentos extends javax.swing.JDialog {
                         .addComponent(lbFiltro)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(tfFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jExpXls))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -120,9 +141,10 @@ public class GridPagamentos extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbFiltro))
+                    .addComponent(lbFiltro)
+                    .addComponent(jExpXls))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -187,6 +209,60 @@ public class GridPagamentos extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_formWindowOpened
 
+    private void jExpXlsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jExpXlsActionPerformed
+        File arqDestino = abreDestino();
+        if(arqDestino == null)return;
+        
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        TableModel model = tPagamentos.getModel();
+            //Ignora última coluna pois não deve aparecer na listagem
+        for (int i = 0; i < model.getColumnCount() - 1; i++) {
+            row.createCell(i).setCellValue(model.getColumnName(i));
+        }
+        Object cell;
+        for (int i = 0; i < model.getRowCount(); i++) {
+            row = sheet.createRow(i + 1);
+            //Ignora última coluna pois não deve aparecer na listagem
+            for (int j = 0; j < model.getColumnCount() - 1; j++) {
+                cell = model.getValueAt(i, j);
+                if(cell instanceof Integer) row.createCell(j).setCellValue((Integer) cell);
+                else if(cell instanceof Double) row.createCell(j).setCellValue((Double) cell);
+                else row.createCell(j).setCellValue(cell.toString());
+            }
+        }
+        FileOutputStream fileOut;
+        try {
+            fileOut = new FileOutputStream(arqDestino);
+            wb.write(fileOut);
+            fileOut.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(GridPagamentos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(GridPagamentos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jExpXlsActionPerformed
+
+    private File abreDestino() {
+        JFileChooser fileChooser = new JFileChooser();
+
+        fileChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel", "xls");
+        fileChooser.setSelectedFile(new File("pagamentos.xls"));
+        fileChooser.setFileFilter(filter);
+
+        int result = fileChooser.showSaveDialog( null );
+        if( result == JFileChooser.CANCEL_OPTION ) {
+                return null;
+        }
+        File file = fileChooser.getSelectedFile();
+        if(file.toString().substring(file.toString().length() - 4).equals(".xls")) return file;
+        else return new File(fileChooser.getSelectedFile().toString() + ".xls");
+    }	
+    
+    
     
     //Limpa a tabela caso existam registros
     private void limpaGrid(){
@@ -258,6 +334,7 @@ public class GridPagamentos extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jExpXls;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbFiltro;
     private javax.swing.JTable tPagamentos;
