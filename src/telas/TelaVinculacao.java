@@ -14,6 +14,7 @@ import dizimo.Funcao;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.text.NumberFormat;
+import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.text.NumberFormatter;
@@ -79,6 +80,11 @@ public class TelaVinculacao extends javax.swing.JDialog {
         lbDataFinal.setText("Data Final");
 
         ftDataFinal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+        ftDataFinal.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                ftDataFinalFocusLost(evt);
+            }
+        });
 
         pbOk.setText("OK");
         pbOk.addActionListener(new java.awt.event.ActionListener() {
@@ -90,6 +96,11 @@ public class TelaVinculacao extends javax.swing.JDialog {
         jLabel1.setText("Pessoa");
 
         ftDataInicial.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+        ftDataInicial.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                ftDataInicialFocusLost(evt);
+            }
+        });
 
         pbBuscar.setText("Buscar");
         pbBuscar.addActionListener(new java.awt.event.ActionListener() {
@@ -174,13 +185,15 @@ public class TelaVinculacao extends javax.swing.JDialog {
         if(fun==Funcao.INCLUSAO){
             fichaPessoa = new DBFichaPessoa();
             fichaPessoa.setFicha(ficha);
+        //Busca ano atual
+            fichaPessoa.setDataInicial(Calendar.getInstance().getTime());
         }else{
             pessoa = fichaPessoa.getPessoa();
             tfPessoa.setText(pessoa.getCodigo().toString());
             tfNomePessoa.setText(pessoa.getNome());
-            ftDataInicial.setValue(fichaPessoa.getDataInicial());
-            ftDataFinal.setValue(fichaPessoa.getDataFinal());
         }
+        ftDataInicial.setValue(fichaPessoa.getDataInicial());
+        ftDataFinal.setValue(fichaPessoa.getDataFinal());
     }//GEN-LAST:event_formWindowOpened
 
     private void tfPessoaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfPessoaFocusLost
@@ -208,6 +221,18 @@ public class TelaVinculacao extends javax.swing.JDialog {
         fichaPessoa.setDataFinal((Date)ftDataFinal.getValue());
         dispose();
     }//GEN-LAST:event_pbOkActionPerformed
+
+    private void ftDataInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ftDataInicialFocusLost
+        if(ftDataInicial.getText().isEmpty()){
+            ftDataInicial.setValue(null);
+        }
+    }//GEN-LAST:event_ftDataInicialFocusLost
+
+    private void ftDataFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ftDataFinalFocusLost
+        if(ftDataFinal.getText().isEmpty()){
+            ftDataFinal.setValue(null);
+        }
+    }//GEN-LAST:event_ftDataFinalFocusLost
     
     public DBFichaPessoa getFichaPessoa(){
         return fichaPessoa;

@@ -36,15 +36,16 @@ public class TelaFicha extends javax.swing.JDialog {
     private DBMLocalizador<DBFicha> lFicha;
     private DBMPersistor pFicha;
     private DBMPersistor pFichaPessoa;
+    private Calendar cal;
     
     private DBPagamento pagamento;
     private DBMPersistor pPagamento;
     private DBMLocalizador<DBPagamento> lPagamento;
     private ArrayList<DBPagamento> aPagamentoGravados;
 
-
     private DBPessoa responsavel;
     private DBMLocalizador<DBPessoa> lPessoa;
+    private DBPessoa pessoa;
 
     private DBEndereco endereco;
     private DBMLocalizador<DBEndereco> lEndereco;
@@ -279,7 +280,7 @@ public class TelaFicha extends javax.swing.JDialog {
         }
         
         //Busca ano atual
-        Calendar cal = Calendar.getInstance();
+        cal = Calendar.getInstance();
         int anoAtual = cal.get(Calendar.YEAR);
         
         //Carrega conteúdo padrão para a lista de pagamentos
@@ -323,8 +324,7 @@ public class TelaFicha extends javax.swing.JDialog {
                 }               
             }
             
-        }catch(NumberFormatException e){
-        } catch (DBMException ex) {
+        }catch(NumberFormatException | DBMException e){
         }
         //Habilita campos de dados
         tbPagamentos.setEnabled(true);
@@ -344,9 +344,13 @@ public class TelaFicha extends javax.swing.JDialog {
         ficha.setCodigo(Integer.parseInt(tfNumero.getText()));
         ficha.setResponsavel(responsavel);
         ficha.setObservacoes(tfObservacoes.getText());
+        
+        
+        atualizaNumeroFichaPessoa();
+        
+        
         //Executa comandos no banco de dados
         try {
-
             switch(fun){
                 case INCLUSAO:
                     pFicha.insere();
@@ -359,7 +363,6 @@ public class TelaFicha extends javax.swing.JDialog {
                     geraIDFichaPessoa();
                     excluiFichaPessoa();
                     insereFichaPessoa();
-                    
                     excluiPagamento();
                     inserePagamento();
                     break;
@@ -373,6 +376,24 @@ public class TelaFicha extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_pbOkActionPerformed
 
+    
+    private void atualizaNumeroFichaPessoa(){
+        for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
+            try {
+                lPessoa = new DBMLocalizador<>(DBPessoa.class);
+                pessoa = lPessoa.procuraRegistro(fichaPessoa.getPessoa().getCodigo());
+                DBMPersistor pPessoa = new DBMPersistor(pessoa);
+                //Se a pessoa está dentro do período da vinculação
+                //    Gravar ficha na pessoa
+                //Se a pessoa não está dentro do período
+                //    Se a ficha já estava na pessoa: Tirar número da ficha
+                //    Se não estava: deixar como está
+            } catch (DBMException ex) {
+                Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
     private void insereFichaPessoa(){
         for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
             try {
