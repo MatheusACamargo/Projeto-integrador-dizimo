@@ -34,7 +34,8 @@
                       <Component id="lbFiltro" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="tfFiltro" min="-2" pref="272" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="jExpXls" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jScrollPane1" alignment="0" pref="548" max="32767" attributes="0"/>
               </Group>
@@ -49,9 +50,10 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="tfFiltro" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="lbFiltro" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jExpXls" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="275" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="272" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -122,5 +124,13 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="jExpXls">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Exportar XLS"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jExpXlsActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>
