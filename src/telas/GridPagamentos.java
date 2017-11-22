@@ -48,6 +48,7 @@ public class GridPagamentos extends javax.swing.JDialog {
     public GridPagamentos(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(null);
         dtm = (DefaultTableModel) tPagamentos.getModel();
     }
 

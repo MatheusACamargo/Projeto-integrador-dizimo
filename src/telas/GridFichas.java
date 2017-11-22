@@ -40,6 +40,7 @@ public class GridFichas extends javax.swing.JDialog {
     public GridFichas(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(null);
         dtm = (DefaultTableModel) tFichas.getModel();
     }
 

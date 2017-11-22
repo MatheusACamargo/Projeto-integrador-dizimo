@@ -36,6 +36,7 @@ public class GridPessoas extends javax.swing.JDialog {
         super(parent, modal);
         this.fun = fun;
         initComponents();
+        setLocationRelativeTo(null);
         dtm = (DefaultTableModel) tPessoas.getModel();
     }
     public GridPessoas(java.awt.Dialog parent, boolean modal, Funcao fun) {

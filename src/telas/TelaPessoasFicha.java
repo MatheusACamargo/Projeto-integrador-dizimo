@@ -25,6 +25,7 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
     private DBPessoa responsavel;
     private boolean OK;
     private DBFicha ficha;
+    private Funcao fun;
 
     /**
      * Creates new form TelaPessoasFicha
@@ -32,12 +33,14 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
      * @param modal
      * @param aFichaPessoa
      */
-    public TelaPessoasFicha(java.awt.Dialog parent, boolean modal, DBFicha ficha, ArrayList<DBFichaPessoa> aFichaPessoa) {
+    public TelaPessoasFicha(java.awt.Dialog parent, boolean modal, DBFicha ficha, ArrayList<DBFichaPessoa> aFichaPessoa, Funcao fun) {
         super(parent, modal);
         this.aFichaPessoa = aFichaPessoa;
         this.ficha = ficha;
+        this.fun = fun;
         OK = false;
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -156,7 +159,7 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pbIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbIncluirActionPerformed
-        TelaVinculacao tVinculacao = new TelaVinculacao(this, true, Funcao.INCLUSAO, ficha, null);
+        TelaVinculacao tVinculacao = new TelaVinculacao(this, true, Funcao.INCLUSAO, ficha, null, aFichaPessoa);
         tVinculacao.setVisible(true);
         if(tVinculacao.isOK()){
             aFichaPessoa.add(tVinculacao.getFichaPessoa());
@@ -170,7 +173,7 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
             return;
         }
-        TelaVinculacao tVinculacao = new TelaVinculacao(this, true, Funcao.EXCLUSAO, ficha, aFichaPessoa.get(row));
+        TelaVinculacao tVinculacao = new TelaVinculacao(this, true, Funcao.EXCLUSAO, ficha, aFichaPessoa.get(row), aFichaPessoa);
         tVinculacao.setVisible(true);
         if(tVinculacao.isOK()){
             aFichaPessoa.remove(row);
@@ -193,7 +196,7 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
             return;
         }
-        TelaVinculacao tVinculacao = new TelaVinculacao(this, true, Funcao.ALTERACAO, ficha, aFichaPessoa.get(row));
+        TelaVinculacao tVinculacao = new TelaVinculacao(this, true, Funcao.ALTERACAO, ficha, aFichaPessoa.get(row), aFichaPessoa);
         tVinculacao.setVisible(true);
         if(tVinculacao.isOK()){
             dtm.removeRow(row);
@@ -202,6 +205,12 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
     }//GEN-LAST:event_pbAlterarActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        if(fun == Funcao.CONSULTA){
+            pbIncluir.setEnabled(false);
+            pbAlterar.setEnabled(false);
+            pbExcluir.setEnabled(false);
+            pbOk.setEnabled(false);
+        }
         dtm = (DefaultTableModel) tPessoasFicha.getModel();
         atualizaGrid();
     }//GEN-LAST:event_formWindowOpened

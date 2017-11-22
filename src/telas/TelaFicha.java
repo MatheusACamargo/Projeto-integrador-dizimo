@@ -15,13 +15,22 @@ import database.DBMPersistor;
 import database.DBPagamento;
 import database.DBPessoa;
 import dizimo.Funcao;
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractCellEditor;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.text.JTextComponent;
+import sun.awt.CausedFocusEvent;
 
 /**
  *
@@ -62,6 +71,7 @@ public class TelaFicha extends javax.swing.JDialog {
         this.codigo = codigo;
         OK = false;
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -220,7 +230,7 @@ public class TelaFicha extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pbPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbPessoasActionPerformed
-        TelaPessoasFicha tPessoas = new TelaPessoasFicha(this, true, ficha, aFichaPessoa);
+        TelaPessoasFicha tPessoas = new TelaPessoasFicha(this, true, ficha, aFichaPessoa, fun);
         tPessoas.setVisible(true);
         if(tPessoas.isOK()){
             responsavel = tPessoas.getResponsavel();
@@ -267,8 +277,13 @@ public class TelaFicha extends javax.swing.JDialog {
             tfResponsavel.setEnabled(false);
             tfEndereco.setEnabled(false);
             tbPagamentos.setEnabled(false);
-            pbPessoas.setEnabled(false);
+            if(fun != Funcao.CONSULTA){
+                pbPessoas.setEnabled(false);
+            }
             tfObservacoes.setEnabled(false);
+        }
+        if(fun == Funcao.ALTERACAO || fun == Funcao.CONSULTA ){
+            tfNumero.setEnabled(false);
         }
         if(fun == Funcao.CONSULTA || fun == Funcao.EXCLUSAO || fun == Funcao.ALTERACAO){
             //Carrega dados da ficha lida para a manutenção
@@ -310,18 +325,32 @@ public class TelaFicha extends javax.swing.JDialog {
     }//GEN-LAST:event_formWindowOpened
 
     private void tfNumeroFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfNumeroFocusLost
+        if(evt.isTemporary())return;
+        if(((CausedFocusEvent) evt).getCause() == CausedFocusEvent.Cause.CLEAR_GLOBAL_FOCUS_OWNER)return;
         try{
-        //Define o número da ficha
-            ficha.setCodigo(Integer.parseInt(tfNumero.getText()));
+            
             if(fun == Funcao.INCLUSAO){
-            //Verificar se ficha informada já existe para inclusão;
-                if(lFicha.procuraRegistro(ficha.getCodigo()) != null){
-                    JOptionPane.showMessageDialog(this, "Ficha de código " + ficha.getCodigo() + " já existe!");
+                int cod;
+                //Se código em branco ou zerado
+                if(tfNumero.getText().isEmpty() || (cod = Integer.parseInt(tfNumero.getText())) == 0){
+                    JOptionPane.showMessageDialog(this, "Código deve ser informado!");
+                    tfNumero.requestFocus();
+                    return;
+                }
+
+                //Se código em branco ou zerado
+                if(cod == 0){
+                }
+                //Verificar se ficha informada já existe para inclusão;
+                if(lFicha.procuraRegistro(cod) != null){
+                    JOptionPane.showMessageDialog(this, "Ficha de código " + cod + " já existe!");
                     tfNumero.setText("");
                     tfNumero.requestFocus();
                     return;
                 }               
             }
+            //Define o número da ficha
+            ficha.setCodigo(Integer.parseInt(tfNumero.getText()));
             
         }catch(NumberFormatException e){
         } catch (DBMException ex) {
@@ -335,6 +364,11 @@ public class TelaFicha extends javax.swing.JDialog {
     }//GEN-LAST:event_tfNumeroFocusLost
 
     private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
+        if(responsavel == null){
+            JOptionPane.showMessageDialog(this, "Responsável deve ser informado!");
+            pbPessoas.requestFocus();
+            return;
+        }
         dispose();
         if(tfNumero.getText().isEmpty()){
             return;
@@ -492,7 +526,7 @@ public class TelaFicha extends javax.swing.JDialog {
     public DBFicha getFicha() {
         return ficha;
     }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

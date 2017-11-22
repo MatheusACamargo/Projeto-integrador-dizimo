@@ -49,6 +49,7 @@ public class TelaPessoa extends javax.swing.JDialog {
         this.codigo = codigo;
         OK = false;
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**

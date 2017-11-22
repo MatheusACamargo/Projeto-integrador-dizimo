@@ -14,9 +14,11 @@ import dizimo.Funcao;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.text.NumberFormatter;
+import sun.awt.CausedFocusEvent;
 
 /**
  *
@@ -28,16 +30,19 @@ public class TelaVinculacao extends javax.swing.JDialog {
     private DBMLocalizador<DBPessoa> lPessoa;
     private DBPessoa pessoa;
     private DBFicha ficha;
+    private ArrayList<DBFichaPessoa> aFichaPessoa;
+
     private boolean OK;
     
     /**
      * Creates new form TelaVinculacao
      */
-    public TelaVinculacao(java.awt.Dialog parent, boolean modal, Funcao fun, DBFicha ficha, DBFichaPessoa fichaPessoa) {
+    public TelaVinculacao(java.awt.Dialog parent, boolean modal, Funcao fun, DBFicha ficha, DBFichaPessoa fichaPessoa, ArrayList<DBFichaPessoa> aFichaPessoa) {
         super(parent, modal);
         this.fun = fun;
         this.fichaPessoa = fichaPessoa;
         this.ficha = ficha;
+        this.aFichaPessoa = aFichaPessoa;
         OK = false;
         try {     
             lPessoa = new DBMLocalizador<>(DBPessoa.class);
@@ -45,6 +50,7 @@ public class TelaVinculacao extends javax.swing.JDialog {
             Logger.getLogger(TelaVinculacao.class.getName()).log(Level.SEVERE, null, ex);
         }
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -184,15 +190,18 @@ public class TelaVinculacao extends javax.swing.JDialog {
     }//GEN-LAST:event_formWindowOpened
 
     private void tfPessoaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfPessoaFocusLost
+        if(evt.isTemporary())return;
+        if(((CausedFocusEvent) evt).getCause() == CausedFocusEvent.Cause.CLEAR_GLOBAL_FOCUS_OWNER)return;
         if(tfPessoa.getText().isEmpty()){
             return;
         }
+        int codigoPessoa = Integer.parseInt(tfPessoa.getText());
         try {
-            int codigoPessoa = Integer.parseInt(tfPessoa.getText());
             pessoa = lPessoa.procuraRegistro(codigoPessoa);
             if(pessoa == null){
                 JOptionPane.showMessageDialog(this, "Pessoa de código " + codigoPessoa + " não foi lida corretamente do banco!");
                 tfPessoa.requestFocus();
+                return;
             }else{
                 tfNomePessoa.setText(pessoa.getNome());
                 fichaPessoa.setPessoa(pessoa);
@@ -200,6 +209,15 @@ public class TelaVinculacao extends javax.swing.JDialog {
         } catch (DBMException ex) {
             Logger.getLogger(TelaVinculacao.class.getName()).log(Level.SEVERE, null, ex);
         }                
+        
+        for(DBFichaPessoa ficpes : aFichaPessoa){
+            if(ficpes.getIntDBPessoa() == codigoPessoa){
+                JOptionPane.showMessageDialog(this, "Pessoa de código " + codigoPessoa + " já está informada para esta ficha!");
+                tfPessoa.requestFocus();
+
+            }
+        }
+        
     }//GEN-LAST:event_tfPessoaFocusLost
 
     private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
