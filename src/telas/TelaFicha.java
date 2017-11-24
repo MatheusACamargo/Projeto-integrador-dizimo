@@ -411,6 +411,7 @@ public class TelaFicha extends javax.swing.JDialog {
 
     
     private void atualizaNumeroFichaPessoa(){
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy");        
         //Busca ano atual
         cal = Calendar.getInstance();
