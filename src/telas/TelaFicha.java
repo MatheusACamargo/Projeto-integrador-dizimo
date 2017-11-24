@@ -345,11 +345,9 @@ public class TelaFicha extends javax.swing.JDialog {
         ficha.setCodigo(Integer.parseInt(tfNumero.getText()));
         ficha.setResponsavel(responsavel);
         ficha.setObservacoes(tfObservacoes.getText());
-        
-        
+
         atualizaNumeroFichaPessoa();
-        
-        
+
         //Executa comandos no banco de dados
         try {
             switch(fun){
