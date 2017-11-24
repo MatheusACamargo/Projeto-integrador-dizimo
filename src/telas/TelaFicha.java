@@ -15,9 +15,12 @@ import database.DBMPersistor;
 import database.DBPagamento;
 import database.DBPessoa;
 import dizimo.Funcao;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -292,9 +295,7 @@ public class TelaFicha extends javax.swing.JDialog {
             rowInserida[0] = anoAtual - i;
             
             for (DBPagamento pagamentoGravado : aPagamentoGravados) {
-                
                 Date dat = pagamentoGravado.getDataReferencia();
-                
                 cal.setTime(dat);
                 int ano = cal.get(Calendar.YEAR);
                 int mes = cal.get(Calendar.MONTH);
@@ -378,18 +379,47 @@ public class TelaFicha extends javax.swing.JDialog {
 
     
     private void atualizaNumeroFichaPessoa(){
-        for (DBFichaPessoa fichaPessoa : aFichaPessoa) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy");        
+        //Busca ano atual
+        cal = Calendar.getInstance();
+        for(DBFichaPessoa fichaPessoa : aFichaPessoa) {            
             try {
+                String dataConversao = dateFormat.format(cal.getTime());                           
+                Date dataAtual = dateFormat.parse(dataConversao);
+                
+                Date dataInicial = null;
+                if(fichaPessoa.getDataInicial()!= null){
+                    dataConversao = dateFormat.format(fichaPessoa.getDataInicial());                           
+                    dataInicial = dateFormat.parse(dataConversao);
+                }
+                
+                Date dataFinal = null;
+                if(fichaPessoa.getDataFinal() != null){
+                    dataConversao = dateFormat.format(fichaPessoa.getDataFinal());                           
+                    dataFinal = dateFormat.parse(dataConversao);
+                }
+                
                 lPessoa = new DBMLocalizador<>(DBPessoa.class);
                 pessoa = lPessoa.procuraRegistro(fichaPessoa.getPessoa().getCodigo());
                 DBMPersistor pPessoa = new DBMPersistor(pessoa);
-                //Se a pessoa está dentro do período da vinculação
-                //    Gravar ficha na pessoa
-                //Se a pessoa não está dentro do período
-                //    Se a ficha já estava na pessoa: Tirar número da ficha
-                //    Se não estava: deixar como está
-            } catch (DBMException ex) {
-                Logger.getLogger(TelaFicha.class.getName()).log(Level.SEVERE, null, ex);
+                
+                //Se a data inicial não é depois da data atual e 
+                //a data final não é antes da data atual
+                if((dataInicial != null && !dataInicial.after(dataAtual)) && 
+                   (dataFinal == null || !dataFinal.before(dataAtual)) &&
+                    fun != Funcao.EXCLUSAO){
+                    pessoa.setNumFichaAtual(ficha.getCodigo());
+                    pPessoa.altera();
+                }else{
+                    if(pessoa.getNumFichaAtual().equals(ficha.getCodigo())){
+                        pessoa.setNumFichaAtual(0);
+                        pPessoa.altera();
+                    }else{
+                        //Não altera a pessoa
+                    }
+                }                                
+            } catch (DBMException | ParseException ex) {
             }
         }
     }
