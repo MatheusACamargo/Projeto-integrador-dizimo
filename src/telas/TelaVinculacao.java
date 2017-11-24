@@ -29,9 +29,12 @@ public class TelaVinculacao extends javax.swing.JDialog {
     private Funcao fun;
     private DBFichaPessoa fichaPessoa;
     private DBMLocalizador<DBPessoa> lPessoa;
+    private DBMLocalizador<DBFichaPessoa> lFichaPessoa;
+
     private DBPessoa pessoa;
     private DBFicha ficha;
     private ArrayList<DBFichaPessoa> aFichaPessoa;
+    private ArrayList<DBFichaPessoa> aFichaPessoa_vinculos;
 
     private boolean OK;
     
@@ -47,6 +50,7 @@ public class TelaVinculacao extends javax.swing.JDialog {
         OK = false;
         try {     
             lPessoa = new DBMLocalizador<>(DBPessoa.class);
+            lFichaPessoa = new DBMLocalizador<>(DBFichaPessoa.class);
         } catch (DBMException ex) {
             Logger.getLogger(TelaVinculacao.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -202,6 +206,7 @@ public class TelaVinculacao extends javax.swing.JDialog {
         ftDataFinal.setValue(fichaPessoa.getDataFinal());
         if(fun==Funcao.ALTERACAO){
             tfPessoa.setEnabled(false);
+            pbBuscar.setEnabled(false);
         }
         ftDataInicial.setValue(fichaPessoa.getDataInicial());
         ftDataFinal.setValue(fichaPessoa.getDataFinal());
@@ -211,6 +216,8 @@ public class TelaVinculacao extends javax.swing.JDialog {
         if(evt.isTemporary())return;
         if(((CausedFocusEvent) evt).getCause() == CausedFocusEvent.Cause.CLEAR_GLOBAL_FOCUS_OWNER)return;
         if(tfPessoa.getText().isEmpty()){
+            tfPessoa.setValue(null);
+            fichaPessoa.setPessoa(null);
             return;
         }
         int codigoPessoa = Integer.parseInt(tfPessoa.getText());
@@ -221,6 +228,11 @@ public class TelaVinculacao extends javax.swing.JDialog {
                 tfPessoa.requestFocus();
                 return;
             }else{
+                if(pessoa.getNumFichaAtual() != 0){
+                    JOptionPane.showMessageDialog(this, "Pessoa de código " + codigoPessoa + " ainda está cadastrada na ficha " + pessoa.getNumFichaAtual() + "!");
+                    tfPessoa.requestFocus();
+                    return;
+                }
                 tfNomePessoa.setText(pessoa.getNome());
                 fichaPessoa.setPessoa(pessoa);
             }
@@ -242,18 +254,57 @@ public class TelaVinculacao extends javax.swing.JDialog {
         OK = true;
         fichaPessoa.setDataInicial((Date)ftDataInicial.getValue());
         fichaPessoa.setDataFinal((Date)ftDataFinal.getValue());
+        if(fichaPessoa.getPessoa() == null){
+            JOptionPane.showMessageDialog(this, "Pessoa deve ser informada!");
+            ftDataInicial.requestFocus();
+            return;
+        }
+        if(fichaPessoa.getDataInicial()== null){
+            JOptionPane.showMessageDialog(this, "Data inicial deve ser informada!");
+            ftDataInicial.requestFocus();
+            return;
+        }
+        if(fichaPessoa.getDataFinal() != null && fichaPessoa.getDataFinal().before(fichaPessoa.getDataInicial())){
+            JOptionPane.showMessageDialog(this, "Data final não pode ser anterior à data inicial!");
+            ftDataFinal.requestFocus();
+            return;
+        }
+        try {
+            aFichaPessoa_vinculos = lFichaPessoa.procuraRegistros(
+                                            "intDBPessoa = ? AND intFicha != ? AND "
+                                          + "((strDataInicial <= ? AND (strDataFinal >= ? OR strDataFinal = '')) OR "
+                                          + "(strDataInicial > ? AND (strDataFinal < ? OR ? = '')))",
+                                          fichaPessoa.getPessoa().getCodigo(),
+                                          fichaPessoa.getFicha().getCodigo(),
+                                          fichaPessoa.getStrDataInicial(),
+                                          fichaPessoa.getStrDataInicial(),
+                                          fichaPessoa.getStrDataInicial(),
+                                          fichaPessoa.getStrDataFinal(),
+                                          fichaPessoa.getStrDataFinal()
+            );
+            if(aFichaPessoa_vinculos!=null && !aFichaPessoa_vinculos.isEmpty()){
+                JOptionPane.showMessageDialog(this, "Pessoa já está na ficha " + aFichaPessoa_vinculos.get(0).getIntFicha() + " no período entre " + aFichaPessoa_vinculos.get(0).getStrDataInicial()+ " e " + aFichaPessoa_vinculos.get(0).getStrDataFinal() + "!");
+                ftDataInicial.requestFocus();
+                return;
+            }
+        } catch (DBMException ex) {
+            Logger.getLogger(TelaVinculacao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         dispose();
     }//GEN-LAST:event_pbOkActionPerformed
 
     private void ftDataInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ftDataInicialFocusLost
         if(ftDataInicial.getText().isEmpty()){
             ftDataInicial.setValue(null);
+            fichaPessoa.setDataInicial(null);
         }
     }//GEN-LAST:event_ftDataInicialFocusLost
 
     private void ftDataFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ftDataFinalFocusLost
         if(ftDataFinal.getText().isEmpty()){
             ftDataFinal.setValue(null);
+            fichaPessoa.setDataFinal(null);
         }
     }//GEN-LAST:event_ftDataFinalFocusLost
     

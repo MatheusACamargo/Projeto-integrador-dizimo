@@ -80,7 +80,7 @@
               <Table columnCount="3" rowCount="0">
                 <Column editable="false" title="Pessoa" type="java.lang.String"/>
                 <Column editable="false" title="Data Inicial" type="java.lang.String"/>
-                <Column editable="true" title="Data Final" type="java.lang.String"/>
+                <Column editable="false" title="Data Final" type="java.lang.String"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

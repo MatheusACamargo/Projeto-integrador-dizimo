@@ -83,7 +83,7 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, true
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -193,9 +193,11 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
     private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
         OK = true;
         int row = tPessoasFicha.getSelectedRow();
-        if(row != -1){
-            responsavel = aFichaPessoa.get(tPessoasFicha.getSelectedRow()).getPessoa();
+        if(row == -1){
+            JOptionPane.showMessageDialog(this, "Selecione o responsável da ficha!");
+            return;
         }
+        responsavel = aFichaPessoa.get(tPessoasFicha.getSelectedRow()).getPessoa();
         dispose();
     }//GEN-LAST:event_pbOkActionPerformed
 

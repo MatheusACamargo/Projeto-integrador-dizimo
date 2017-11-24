@@ -286,10 +286,8 @@ public class TelaFicha extends javax.swing.JDialog {
             }
             tfObservacoes.setEnabled(false);
         }
-        if(fun == Funcao.ALTERACAO || fun == Funcao.CONSULTA ){
+        if(fun == Funcao.ALTERACAO || fun == Funcao.EXCLUSAO ||fun == Funcao.CONSULTA ){
             tfNumero.setEnabled(false);
-        }
-        if(fun == Funcao.CONSULTA || fun == Funcao.EXCLUSAO || fun == Funcao.ALTERACAO){
             //Carrega dados da ficha lida para a manutenção
             tfNumero.setText(ficha.getCodigo().toString());
             tfResponsavel.setText(ficha.getResponsavel().getNome());
@@ -439,7 +437,7 @@ public class TelaFicha extends javax.swing.JDialog {
                 //Se a data inicial não é depois da data atual e 
                 //a data final não é antes da data atual
                 if((dataInicial != null && !dataInicial.after(dataAtual)) && 
-                   (dataFinal == null || !dataFinal.before(dataAtual)) &&
+                   (dataFinal == null || dataFinal.after(dataAtual)) &&
                     fun != Funcao.EXCLUSAO){
                     pessoa.setNumFichaAtual(ficha.getCodigo());
                     pPessoa.altera();

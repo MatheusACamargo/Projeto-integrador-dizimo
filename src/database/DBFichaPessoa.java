@@ -74,7 +74,8 @@ public class DBFichaPessoa {
 
     public void setPessoa(DBPessoa pessoa) {
         this.pessoa = pessoa;
-        intDBPessoa = pessoa.getCodigo();
+        if(pessoa == null)intDBPessoa = 0;
+        else intDBPessoa = pessoa.getCodigo();
     }
 
     public String getStrDataInicial() {
