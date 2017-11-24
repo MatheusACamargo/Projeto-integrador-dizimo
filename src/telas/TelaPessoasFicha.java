@@ -9,8 +9,10 @@ import database.DBFicha;
 import database.DBFichaPessoa;
 import database.DBPessoa;
 import dizimo.Funcao;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -25,6 +27,7 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
     private DBPessoa responsavel;
     private boolean OK;
     private DBFicha ficha;
+    private DateFormat editaData;
     private Funcao fun;
 
     /**
@@ -38,6 +41,7 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
         this.aFichaPessoa = aFichaPessoa;
         this.ficha = ficha;
         this.fun = fun;
+        editaData = new SimpleDateFormat("dd/MM/yyyy");
         OK = false;
         initComponents();
         setLocationRelativeTo(null);
@@ -205,14 +209,14 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
     }//GEN-LAST:event_pbAlterarActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        dtm = (DefaultTableModel) tPessoasFicha.getModel();
+        atualizaGrid();
         if(fun == Funcao.CONSULTA){
             pbIncluir.setEnabled(false);
             pbAlterar.setEnabled(false);
             pbExcluir.setEnabled(false);
             pbOk.setEnabled(false);
         }
-        dtm = (DefaultTableModel) tPessoasFicha.getModel();
-        atualizaGrid();
     }//GEN-LAST:event_formWindowOpened
 
     private void atualizaGrid(){
@@ -225,8 +229,12 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
     private Object[] toRow(DBFichaPessoa fichaPessoa){
         Object[] dados = new Object[tPessoasFicha.getColumnCount()];
         dados[0] = fichaPessoa.getPessoa().getNome();
-        dados[1] = fichaPessoa.getStrDataInicial();
-        dados[2] = fichaPessoa.getStrDataFinal();
+        if(fichaPessoa.getDataInicial() != null){
+            dados[1] = editaData.format(fichaPessoa.getDataInicial());            
+        }
+        if(fichaPessoa.getDataFinal() != null){
+            dados[2] = editaData.format(fichaPessoa.getDataFinal());
+        }
         return dados;
     }
 

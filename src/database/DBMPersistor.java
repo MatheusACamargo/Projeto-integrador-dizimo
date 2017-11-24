@@ -140,9 +140,6 @@ public class DBMPersistor {
         for( Field atributo : atributos ) {
             substituiVlCampo(atributo);
         }
-
-        //lista o comando no banco
-        System.out.println( ps.toString() );
         try {
             ps.execute();
         } catch (SQLException e) {
@@ -173,8 +170,6 @@ public class DBMPersistor {
         for( Field pkField : pk ) {
             substituiVlCampo(pkField);
         }
-        //lista o comando no banco
-        System.out.println( ps.toString() );
         try {
             ps.execute();
         } catch (SQLException e) {
@@ -192,8 +187,6 @@ public class DBMPersistor {
         for( Field pkField : pk ) {
                 substituiVlCampo(pkField);
         }
-        //lista o comando no banco
-        System.out.println( ps.toString() );
         try {
             ps.execute();
         } catch (SQLException e) {

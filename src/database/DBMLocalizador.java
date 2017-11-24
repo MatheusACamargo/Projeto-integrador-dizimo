@@ -128,8 +128,6 @@ public class DBMLocalizador<T extends Object>{
                 throw new DBMException(e);
             }
         }
-        //lista o comando no banco
-        System.out.println(ps.toString());
         try {
             ResultSet rs;
             rs = ps.executeQuery();
