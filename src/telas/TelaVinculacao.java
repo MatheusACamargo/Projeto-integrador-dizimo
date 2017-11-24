@@ -203,6 +203,8 @@ public class TelaVinculacao extends javax.swing.JDialog {
         if(fun==Funcao.ALTERACAO){
             tfPessoa.setEnabled(false);
         }
+        ftDataInicial.setValue(fichaPessoa.getDataInicial());
+        ftDataFinal.setValue(fichaPessoa.getDataFinal());
     }//GEN-LAST:event_formWindowOpened
 
     private void tfPessoaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfPessoaFocusLost

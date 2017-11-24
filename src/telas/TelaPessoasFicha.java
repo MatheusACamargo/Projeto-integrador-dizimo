@@ -177,12 +177,17 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Selecione um registro na tabela abaixo primeiro!");
             return;
         }
-        TelaVinculacao tVinculacao = new TelaVinculacao(this, true, Funcao.EXCLUSAO, ficha, aFichaPessoa.get(row), aFichaPessoa);
-        tVinculacao.setVisible(true);
-        if(tVinculacao.isOK()){
-            aFichaPessoa.remove(row);
-            dtm.removeRow(row);
-        }
+        //Busca ano atual
+        aFichaPessoa.get(row).setDataFinal(Calendar.getInstance().getTime());
+        dtm.removeRow(row);
+        dtm.insertRow(row, toRow(aFichaPessoa.get(row)));
+
+//        TelaVinculacao tVinculacao = new TelaVinculacao(this, true, Funcao.EXCLUSAO, ficha, aFichaPessoa.get(row));
+//        tVinculacao.setVisible(true);
+//        if(tVinculacao.isOK()){
+//            aFichaPessoa.remove(row);
+//            dtm.removeRow(row);
+//        }
     }//GEN-LAST:event_pbExcluirActionPerformed
 
     private void pbOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pbOkActionPerformed
@@ -209,6 +214,7 @@ public class TelaPessoasFicha extends javax.swing.JDialog {
     }//GEN-LAST:event_pbAlterarActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        editaData = new SimpleDateFormat("dd/MM/yyyy");
         dtm = (DefaultTableModel) tPessoasFicha.getModel();
         atualizaGrid();
         if(fun == Funcao.CONSULTA){
